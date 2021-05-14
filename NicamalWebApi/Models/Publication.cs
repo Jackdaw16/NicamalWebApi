@@ -17,7 +17,7 @@ namespace NicamalWebApi.Models
         public DateTime BirthDate { get; set; }
         public DateTime CreatedAt { get; set; }
         
-        public int IdUser { get; set; }
+        public int UserId { get; set; }
         public User User { get; set; }
         
         public Report Report { get; set; }

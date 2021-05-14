@@ -70,9 +70,6 @@ namespace NicamalWebApi.Migrations
                     b.Property<string>("History")
                         .HasColumnType("longtext");
 
-                    b.Property<int>("IdUser")
-                        .HasColumnType("int");
-
                     b.Property<string>("Image")
                         .HasColumnType("longtext");
 
@@ -91,7 +88,7 @@ namespace NicamalWebApi.Migrations
                     b.Property<string>("Species")
                         .HasColumnType("longtext");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.Property<double>("Weight")
@@ -193,7 +190,9 @@ namespace NicamalWebApi.Migrations
                 {
                     b.HasOne("NicamalWebApi.Models.User", "User")
                         .WithMany("Publications")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
