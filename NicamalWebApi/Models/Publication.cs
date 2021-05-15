@@ -16,6 +16,7 @@ namespace NicamalWebApi.Models
         public bool IsUrgent { get; set; }
         public DateTime BirthDate { get; set; }
         public DateTime CreatedAt { get; set; }
+        public DateTime UpdateAt { get; set; }
         
         public int UserId { get; set; }
         public User User { get; set; }

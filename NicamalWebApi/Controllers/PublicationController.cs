@@ -26,7 +26,7 @@ namespace NicamalWebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PublicationResponse>>> Get([FromQuery] Pagination pagination)
+        public async Task<ActionResult<IEnumerable<PublicationsResponseForList>>> Get([FromQuery] Pagination pagination)
         {
             try
             {
@@ -35,7 +35,7 @@ namespace NicamalWebApi.Controllers
                 
                 var publications = await queryable.Paginate(pagination).Include(p => p.User).ToListAsync();
 
-                return mapper.Map<List<PublicationResponse>>(publications);
+                return mapper.Map<List<PublicationsResponseForList>>(publications);
             }
             catch (Exception e)
             {

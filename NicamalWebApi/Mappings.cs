@@ -9,9 +9,14 @@ namespace NicamalWebApi
         public Mappings()
         {
             CreateMap<User, UserForPublication>();
-            CreateMap<Publication, PublicationResponse>().ForMember(a => a.User,
+            CreateMap<User, UserResponseWhenLoggedIn>();
+            CreateMap<UserResponseWhenLoggedIn, User>();
+            CreateMap<UserRegister, User>();
+            CreateMap<User, UserRegister>();
+            
+            CreateMap<Publication, PublicationsResponseForList>().ForMember(a => a.User,
                 b => b.MapFrom(o => o.User));
-
+            
         }
     }
 }

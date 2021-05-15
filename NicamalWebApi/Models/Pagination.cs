@@ -4,7 +4,7 @@
     {
         public int CurrentPage { get; set; } = 1;
 
-        private int countRegistryPerPage = 10;
+        private int countRegistryPerPage = 5;
         private readonly int maxCountRegistryPerPage = 50;
 
         public int CountRegistryPerPage
