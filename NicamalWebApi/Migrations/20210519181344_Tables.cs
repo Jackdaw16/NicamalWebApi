@@ -63,6 +63,7 @@ namespace NicamalWebApi.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Verify = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     IsShelter = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    IsBanned = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
@@ -96,6 +97,7 @@ namespace NicamalWebApi.Migrations
                     IsUrgent = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     BirthDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    UpdateAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -111,7 +113,7 @@ namespace NicamalWebApi.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Report",
+                name: "Reports",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -127,21 +129,21 @@ namespace NicamalWebApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Report", x => x.Id);
+                    table.PrimaryKey("PK_Reports", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Report_Publications_PublicationId",
+                        name: "FK_Reports_Publications_PublicationId",
                         column: x => x.PublicationId,
                         principalTable: "Publications",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Report_Users_ReportedUserId",
+                        name: "FK_Reports_Users_ReportedUserId",
                         column: x => x.ReportedUserId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Report_Users_UserId",
+                        name: "FK_Reports_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -155,20 +157,20 @@ namespace NicamalWebApi.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Report_PublicationId",
-                table: "Report",
+                name: "IX_Reports_PublicationId",
+                table: "Reports",
                 column: "PublicationId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Report_ReportedUserId",
-                table: "Report",
+                name: "IX_Reports_ReportedUserId",
+                table: "Reports",
                 column: "ReportedUserId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Report_UserId",
-                table: "Report",
+                name: "IX_Reports_UserId",
+                table: "Reports",
                 column: "UserId",
                 unique: true);
         }
@@ -179,7 +181,7 @@ namespace NicamalWebApi.Migrations
                 name: "Disappearances");
 
             migrationBuilder.DropTable(
-                name: "Report");
+                name: "Reports");
 
             migrationBuilder.DropTable(
                 name: "Publications");

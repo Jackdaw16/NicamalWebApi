@@ -16,6 +16,7 @@ namespace NicamalWebApi.Models
         public string Address { get; set; }
         public bool Verify { get; set; }
         public bool IsShelter { get; set; }
+        public bool IsBanned { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         

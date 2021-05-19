@@ -27,15 +27,36 @@ namespace NicamalWebApi.Models.ViewModels
         
     }
 
-    public class UserRegister
+    public class UserResponse
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         public string SurNames { get; set; }
         public string Email { get; set; }
-        public string Password { get; set; }
         public string TelephoneContact { get; set; }
         public string Country { get; set; }
         public string Province { get; set; }
+        public string Address { get; set; }
+        public bool IsShelter { get; set; }
+        public DateTime CreatedAt { get; set; }
+    }
+
+    public class UserRegister
+    {
+        [Required]
+        public string Name { get; set; }
+        public string SurNames { get; set; }
+        [Required]
+        public string Email { get; set; }
+        [Required]
+        public string Password { get; set; }
+        [Required]
+        public string TelephoneContact { get; set; }
+        [Required]
+        public string Country { get; set; }
+        [Required]
+        public string Province { get; set; }
+        [Required]
         public string Address { get; set; }
         public bool IsShelter { get; set; }
         public DateTime CreatedAt { get; set; }

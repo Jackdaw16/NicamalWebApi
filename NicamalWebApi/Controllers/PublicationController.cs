@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
@@ -16,13 +17,13 @@ namespace NicamalWebApi.Controllers
     [ApiController]
     public class PublicationController: ControllerBase
     {
-        private readonly IMapper mapper;
-        private readonly ApplicationDbContext dbContext;
+        private readonly IMapper _mapper;
+        private readonly ApplicationDbContext _dbContext;
         
         public PublicationController(IMapper mapper, ApplicationDbContext dbContext)
         {
-            this.mapper = mapper;
-            this.dbContext = dbContext;
+            _mapper = mapper;
+            dbContext = dbContext;
         }
 
         [HttpGet]
@@ -30,12 +31,12 @@ namespace NicamalWebApi.Controllers
         {
             try
             {
-                var queryable = dbContext.Publications.AsQueryable();
+                var queryable = _dbContext.Publications.AsQueryable();
                 await HttpContext.AddPaginationParams(queryable, pagination.CountRegistryPerPage);
                 
-                var publications = await queryable.Paginate(pagination).Include(p => p.User).ToListAsync();
+                var publications = await queryable.Paginate(pagination).Include(p => p.User).OrderByDescending(x => x.CreatedAt).ToListAsync();
 
-                return mapper.Map<List<PublicationsResponseForList>>(publications);
+                return _mapper.Map<List<PublicationsResponseForList>>(publications);
             }
             catch (Exception e)
             {

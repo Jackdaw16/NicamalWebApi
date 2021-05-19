@@ -9,7 +9,7 @@ using NicamalWebApi.DbContexts;
 namespace NicamalWebApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210514223520_Tables")]
+    [Migration("20210519181344_Tables")]
     partial class Tables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -90,6 +90,9 @@ namespace NicamalWebApi.Migrations
                     b.Property<string>("Species")
                         .HasColumnType("longtext");
 
+                    b.Property<DateTime>("UpdateAt")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
@@ -138,7 +141,7 @@ namespace NicamalWebApi.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Report");
+                    b.ToTable("Reports");
                 });
 
             modelBuilder.Entity("NicamalWebApi.Models.User", b =>
@@ -158,6 +161,9 @@ namespace NicamalWebApi.Migrations
 
                     b.Property<string>("Email")
                         .HasColumnType("longtext");
+
+                    b.Property<bool>("IsBanned")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("IsShelter")
                         .HasColumnType("tinyint(1)");

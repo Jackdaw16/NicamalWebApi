@@ -26,7 +26,7 @@ namespace NicamalWebApi.Controllers
     {
         private readonly ApplicationDbContext _applicationDbContext;
         private readonly IMapper _mapper;
-        private IConfiguration _configuration;
+        private readonly IConfiguration _configuration;
         
         public UserController(ApplicationDbContext applicationDbContext, IMapper mapper, IConfiguration configuration)
         {
@@ -137,7 +137,5 @@ namespace NicamalWebApi.Controllers
                 Token = tokenHandler.WriteToken(createdToken)
             };
         }
-        
-        
     }
 }
