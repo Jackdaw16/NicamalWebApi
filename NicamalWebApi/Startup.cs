@@ -77,6 +77,17 @@ namespace NicamalWebApi
                 });
             });
             
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => 
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["key"])),
+                    ClockSkew = TimeSpan.Zero
+                });
+            
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseMySql(Configuration.GetConnectionString("Local"), ServerVersion.AutoDetect(Configuration.GetConnectionString("Local"))));
             
@@ -110,7 +121,9 @@ namespace NicamalWebApi
                 app.UseDeveloperExceptionPage();
             }
 
-            //pp.UseHttpsRedirection();
+            app.UseHttpsRedirection();
+
+            app.UseStaticFiles();
 
             app.UseRouting();
 
