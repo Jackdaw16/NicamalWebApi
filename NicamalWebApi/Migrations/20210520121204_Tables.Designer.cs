@@ -9,7 +9,7 @@ using NicamalWebApi.DbContexts;
 namespace NicamalWebApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210519181344_Tables")]
+    [Migration("20210520121204_Tables")]
     partial class Tables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -160,6 +160,9 @@ namespace NicamalWebApi.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Email")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Image")
                         .HasColumnType("longtext");
 
                     b.Property<bool>("IsBanned")

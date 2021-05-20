@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace NicamalWebApi.Models.ViewModels
 {
@@ -16,6 +17,7 @@ namespace NicamalWebApi.Models.ViewModels
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public string Image { get; set; }
         public string SurNames { get; set; }
         public string Email { get; set; }
         public string TelephoneContact { get; set; }
@@ -41,6 +43,18 @@ namespace NicamalWebApi.Models.ViewModels
         public DateTime CreatedAt { get; set; }
     }
 
+    public class UserForPublicationDetail
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Image { get; set; }
+        public string Country { get; set; }
+        public string Province { get; set; }
+        public string Address { get; set; }
+        public bool IsShelter { get; set; }
+        public DateTime CreatedAt { get; set; }
+    }
+
     public class UserRegister
     {
         [Required]
@@ -48,6 +62,8 @@ namespace NicamalWebApi.Models.ViewModels
         public string SurNames { get; set; }
         [Required]
         public string Email { get; set; }
+
+        public IFormFile Image { get; set; }
         [Required]
         public string Password { get; set; }
         [Required]

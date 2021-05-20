@@ -8,6 +8,7 @@ namespace NicamalWebApi.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public string SurNames { get; set; }
+        public string Image { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
         public string TelephoneContact { get; set; }

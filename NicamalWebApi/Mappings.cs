@@ -14,10 +14,17 @@ namespace NicamalWebApi
             CreateMap<UserRegister, User>();
             CreateMap<User, UserRegister>();
             CreateMap<User, UserResponse>();
+            CreateMap<User, UserForPublicationDetail>();
+            CreateMap<UserForPublicationDetail, User>();
             
             CreateMap<Publication, PublicationsResponseForList>().ForMember(a => a.User,
                 b => b.MapFrom(o => o.User));
             CreateMap<Publication, PublicationForReport>();
+            CreateMap<PublicationCreate, Publication>();
+            CreateMap<Publication, PublicationDetail>().ForMember(a => a.User,
+                b => b.MapFrom(o => o.User));
+            CreateMap<PublicationDetail, Publication>().ForMember(a => a.User,
+                b => b.MapFrom(o => o.User));
             
             CreateMap<Report, ReportResponse>()
                 .ForMember(a => a.Publication,

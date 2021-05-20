@@ -160,6 +160,9 @@ namespace NicamalWebApi.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("Image")
+                        .HasColumnType("longtext");
+
                     b.Property<bool>("IsBanned")
                         .HasColumnType("tinyint(1)");
 

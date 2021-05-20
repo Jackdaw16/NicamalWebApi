@@ -16,6 +16,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NicamalWebApi.DbContexts;
+using NicamalWebApi.Services;
 
 [assembly: ApiConventionType(typeof(DefaultApiConventions))]
 
@@ -33,6 +34,9 @@ namespace NicamalWebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient<IImageStorage, ImageStorage>();
+            services.AddHttpContextAccessor();
+            
             services.AddSwaggerGen(config =>
             {
                 config.SwaggerDoc("v1", new OpenApiInfo()
