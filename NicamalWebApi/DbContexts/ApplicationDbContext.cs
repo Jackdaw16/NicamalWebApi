@@ -13,6 +13,8 @@ namespace NicamalWebApi.DbContexts
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            
+            modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
 
             modelBuilder.Entity<User>().HasOne(a => a.Reported).WithOne(b => b.ReportedUser)
                 .HasForeignKey<Report>(b => b.ReportedUserId);
