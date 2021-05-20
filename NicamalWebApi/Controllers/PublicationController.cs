@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NicamalWebApi.DbContexts;
@@ -104,9 +105,88 @@ namespace NicamalWebApi.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
             }
-            
-            
+        }
 
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Put(int id, [FromForm] PublicationCreate publicationCreate)
+        {
+            try
+            {
+                var publication = await _dbContext.Publications.FirstOrDefaultAsync(p => p.Id == id);
+                if (publication == null)
+                    return NotFound();
+
+                publication = _mapper.Map(publicationCreate, publication);
+                if (publicationCreate.Image != null)
+                {
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await publicationCreate.Image.CopyToAsync(memoryStream);
+                        var content = memoryStream.ToArray();
+                        var extension = Path.GetExtension(publicationCreate.Image.FileName);
+
+                        publication.Image = await _imageStorage.EditFile(content, extension, Container,
+                            publication.Image, publicationCreate.Image.ContentType);
+                    }
+                }
+
+                await _dbContext.SaveChangesAsync();
+                return Ok();
+
+
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+            
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<ActionResult> Patch(int id, [FromBody] JsonPatchDocument<PublicationCreate> patchDocument)
+        {
+            if (patchDocument == null)
+                return BadRequest();
+
+            var publicationFromDb = await _dbContext.Publications.FirstOrDefaultAsync(p => p.Id == id);
+
+            if (publicationFromDb == null)
+                return NotFound();
+
+            var publicationCreate = _mapper.Map<PublicationCreate>(publicationFromDb);
+            patchDocument.ApplyTo(publicationCreate, ModelState);
+
+            _mapper.Map(publicationCreate, publicationFromDb);
+            
+            var isValid = await TryUpdateModelAsync(publicationFromDb);
+            if (!isValid)
+                return BadRequest();
+
+            await _dbContext.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            try
+            {
+                var publication = await _dbContext.Publications.FirstOrDefaultAsync(p => p.Id == id);
+
+                if (publication == null)
+                    return NotFound();
+
+                _dbContext.Publications.Remove(publication);
+                await _dbContext.SaveChangesAsync();
+
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+            
         }
         
     }

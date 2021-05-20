@@ -20,7 +20,8 @@ namespace NicamalWebApi
             CreateMap<Publication, PublicationsResponseForList>().ForMember(a => a.User,
                 b => b.MapFrom(o => o.User));
             CreateMap<Publication, PublicationForReport>();
-            CreateMap<PublicationCreate, Publication>();
+            CreateMap<PublicationCreate, Publication>().ForMember(a => a.Image,
+                options => options.Ignore());
             CreateMap<Publication, PublicationDetail>().ForMember(a => a.User,
                 b => b.MapFrom(o => o.User));
             CreateMap<PublicationDetail, Publication>().ForMember(a => a.User,
