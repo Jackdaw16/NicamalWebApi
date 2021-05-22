@@ -78,7 +78,6 @@ namespace NicamalWebApi.Controllers
             try
             {
                 var localPublicationCreate = publicationCreate;
-                localPublicationCreate.CreatedAt = DateTime.Now;
                 localPublicationCreate.UpdateAt = DateTime.Now;
             
                 var publication = _mapper.Map<Publication>(localPublicationCreate);
@@ -117,6 +116,8 @@ namespace NicamalWebApi.Controllers
                 var publication = await _dbContext.Publications.FirstOrDefaultAsync(p => p.Id == id);
                 if (publication == null)
                     return NotFound();
+                
+                var createdAt = publication.CreatedAt;
 
                 publication = _mapper.Map(publicationCreate, publication);
                 if (publicationCreate.Image != null)
@@ -132,10 +133,11 @@ namespace NicamalWebApi.Controllers
                     }
                 }
 
+                publication.CreatedAt = createdAt;
+                publication.UpdateAt = DateTime.Now;
+
                 await _dbContext.SaveChangesAsync();
                 return Ok();
-
-
             }
             catch (Exception e)
             {
