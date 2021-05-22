@@ -32,7 +32,9 @@ namespace NicamalWebApi.Controllers
             try
             {
                 var queryable = _context.Reports.AsQueryable();
-                await HttpContext.AddPaginationParams(queryable, pagination.CountRegistryPerPage);
+                queryable = queryable.OrderByDescending(p => p.CreatedAt);
+                
+                await HttpContext.AddPaginationParams(queryable, pagination.PageSize);
 
                 var reports = await queryable.Paginate(pagination)
                     .Include(p => p.Publication)

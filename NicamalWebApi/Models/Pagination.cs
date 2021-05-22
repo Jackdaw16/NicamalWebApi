@@ -2,15 +2,16 @@
 {
     public class Pagination
     {
-        public int CurrentPage { get; set; } = 1;
+        private const int maxPageSize = 50;
+        
+        public int PageNumber { get; set; } = 1;
 
-        private int countRegistryPerPage = 5;
-        private readonly int maxCountRegistryPerPage = 50;
-
-        public int CountRegistryPerPage
+        private int _pageSize = 6;
+        
+        public int PageSize
         {
-            get => countRegistryPerPage;
-            set { countRegistryPerPage = (value > maxCountRegistryPerPage) ? countRegistryPerPage : value; }
+            get => _pageSize;
+            set { _pageSize = (value > maxPageSize) ? maxPageSize : value; }
         }
     }
 }
