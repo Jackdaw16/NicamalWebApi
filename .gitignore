@@ -352,3 +352,4 @@ fabric.properties
 */wwwroot/*
 
 # End of https://www.toptal.com/developers/gitignore/api/rider,aspnetcore
+NicamalWebApi/Properties/launchSettings.json
