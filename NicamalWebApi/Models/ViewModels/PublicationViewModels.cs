@@ -12,6 +12,7 @@ namespace NicamalWebApi.Models.ViewModels
         public string Image { get; set; }
         public string Gender { get; set; }
         public string Personality { get; set; }
+        public string Species { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdateAt { get; set; }
         

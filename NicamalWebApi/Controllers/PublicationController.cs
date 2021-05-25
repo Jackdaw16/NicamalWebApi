@@ -72,6 +72,53 @@ namespace NicamalWebApi.Controllers
             }
         }
 
+        [HttpGet("filters")]
+        public async Task<ActionResult<IEnumerable<PublicationsResponseForList>>> GetFromFilters(
+            [FromQuery] PublicationsFilters filters)
+        {
+            try
+            {
+                var queryable = _dbContext.Publications.AsQueryable();
+
+                if (!string.IsNullOrEmpty(filters.Specie))
+                {
+                    queryable = queryable.Where(x => x.Species.Contains(filters.Specie)).OrderByDescending(p => p.UpdateAt);
+                }
+
+                if (!string.IsNullOrEmpty(filters.Country))
+                {
+                    queryable = queryable.Where(x => x.User.Country.Contains(filters.Country)).OrderByDescending(p => p.UpdateAt);
+                }
+
+                if (!string.IsNullOrEmpty(filters.Province))
+                {
+                    queryable = queryable.Where(x => x.User.Province.Contains(filters.Province)).OrderByDescending(p => p.UpdateAt);
+                }
+
+                if (!string.IsNullOrEmpty(filters.TextForSearch))
+                {
+                    queryable = queryable
+                        .Where(
+                            x => x.Name.Contains(filters.TextForSearch.Trim()) 
+                                 || x.Personality.Contains(filters.TextForSearch.Trim())
+                                 || x.Observations.Contains(filters.TextForSearch.Trim())
+                                 || x.History.Contains(filters.TextForSearch.Trim())
+                                 || x.Species.Contains(filters.TextForSearch.Trim()))
+                        .OrderByDescending(p => p.UpdateAt);
+                }
+
+                await HttpContext.AddPaginationParams(queryable, filters.PageSize);
+                
+                var publications = await queryable.Paginate(filters.Page).Include(p => p.User).OrderByDescending(x => x.CreatedAt).ToListAsync();
+
+                return _mapper.Map<List<PublicationsResponseForList>>(publications);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+
         [HttpPost]
         public async Task<ActionResult> Post([FromForm] PublicationCreate publicationCreate)
         {
