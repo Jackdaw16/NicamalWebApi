@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -37,12 +38,13 @@ namespace NicamalWebApi.Controllers
         }
         
         [HttpGet("{id}", Name = "GetSingleUser")]
-        [Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<UserResponseWhenLoggedIn>> Get(int id)
         {
             try
             {
-                User user = await _applicationDbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
+                User user = await _applicationDbContext.Users
+                    .FirstOrDefaultAsync(u => u.Id == id);
 
                 if (user == null)
                 {

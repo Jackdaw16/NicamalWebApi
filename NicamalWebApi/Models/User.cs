@@ -26,5 +26,6 @@ namespace NicamalWebApi.Models
         public Report Reported { get; set; }
         public Report Report { get; set; }
         
+        
     }
 }

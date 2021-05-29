@@ -24,6 +24,7 @@ namespace NicamalWebApi.DbContexts
         public DbSet<Publication> Publications { get; set; }
         public DbSet<Disappearance> Disappearances { get; set; }
         public DbSet<Report> Reports { get; set; }
+        public DbSet<Images> Images { get; set; }
         
     }
 }

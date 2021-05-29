@@ -99,12 +99,11 @@ namespace NicamalWebApi.Controllers
                 {
                     queryable = queryable
                         .Where(
-                            x => x.Name.Contains(filters.TextForSearch.Trim()) 
+                            x => x.Name.Contains(filters.TextForSearch.Trim())
                                  || x.Personality.Contains(filters.TextForSearch.Trim())
                                  || x.Observations.Contains(filters.TextForSearch.Trim())
                                  || x.History.Contains(filters.TextForSearch.Trim())
-                                 || x.Species.Contains(filters.TextForSearch.Trim()))
-                        .OrderByDescending(p => p.UpdateAt);
+                                 || x.Species.Contains(filters.TextForSearch.Trim()));
                 }
 
                 await HttpContext.AddPaginationParams(queryable, filters.PageSize);
@@ -125,6 +124,7 @@ namespace NicamalWebApi.Controllers
             try
             {
                 var localPublicationCreate = publicationCreate;
+                localPublicationCreate.CreatedAt = DateTime.Now;
                 localPublicationCreate.UpdateAt = DateTime.Now;
             
                 var publication = _mapper.Map<Publication>(localPublicationCreate);

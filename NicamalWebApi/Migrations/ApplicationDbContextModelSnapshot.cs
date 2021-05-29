@@ -52,6 +52,23 @@ namespace NicamalWebApi.Migrations
                     b.ToTable("Disappearances");
                 });
 
+            modelBuilder.Entity("NicamalWebApi.Models.Images", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Image")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Images");
+                });
+
             modelBuilder.Entity("NicamalWebApi.Models.Publication", b =>
                 {
                     b.Property<int>("Id")

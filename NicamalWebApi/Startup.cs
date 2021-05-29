@@ -90,17 +90,6 @@ namespace NicamalWebApi
             
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseMySql(Configuration.GetConnectionString("Local"), ServerVersion.AutoDetect(Configuration.GetConnectionString("Local"))));
-            
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => 
-                options.TokenValidationParameters = new TokenValidationParameters()
-                {
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["key"])),
-                    ClockSkew = TimeSpan.Zero
-                });
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             
@@ -123,12 +112,14 @@ namespace NicamalWebApi
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
+
             app.UseStaticFiles();
 
             app.UseRouting();
 
             app.UseAuthorization();
-
+            
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
