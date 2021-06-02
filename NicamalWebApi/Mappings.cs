@@ -10,7 +10,7 @@ namespace NicamalWebApi
         {
             CreateMap<Disappearance, DisappearanceDetail>().ReverseMap();
             CreateMap<Disappearance, DisappearanceListResponse>().ReverseMap();
-            CreateMap<Disappearance, DisappearanceResponse>().ReverseMap();    
+            CreateMap<Disappearance, DisappearanceCreate>().ReverseMap();    
             
             CreateMap<User, UserForPublication>();
             CreateMap<User, UserResponseWhenLoggedIn>();

@@ -12,6 +12,7 @@ namespace NicamalWebApi.Models
         public string Country { get; set; }
         public string Province { get; set; }
         public string LastSeen { get; set; }
+        public string UserName { get; set; }
         public DateTime CreatedAt { get; set; }
         
     }

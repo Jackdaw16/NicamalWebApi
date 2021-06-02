@@ -52,8 +52,8 @@ namespace NicamalWebApi.Controllers
             }
         }
 
-        [HttpGet("{id}", Name = "GetSinglePublication")]
-        public async Task<ActionResult<PublicationDetail>> Get(int id)
+        [HttpGet("detail", Name = "GetSinglePublication")]
+        public async Task<ActionResult<PublicationDetail>> Get([FromQuery] int id)
         {
             try
             {

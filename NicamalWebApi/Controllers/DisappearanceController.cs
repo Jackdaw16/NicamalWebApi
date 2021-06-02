@@ -53,8 +53,8 @@ namespace NicamalWebApi.Controllers
             }
         }
 
-        [HttpGet("{id}", Name = "GetSingleDisappearance")]
-        public async Task<ActionResult<DisappearanceResponse>> Get(int id)
+        [HttpGet("detail", Name = "GetSingleDisappearance")]
+        public async Task<ActionResult<DisappearanceDetail>> Get([FromQuery] int id)
         {
             try
             {
@@ -63,7 +63,7 @@ namespace NicamalWebApi.Controllers
                 if (disappearance == null)
                     return NotFound();
 
-                return _mapper.Map<DisappearanceResponse>(disappearance);
+                return _mapper.Map<DisappearanceDetail>(disappearance);
 
             }
             catch (Exception e)
@@ -73,7 +73,7 @@ namespace NicamalWebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post([FromForm] DisappearanceDetail disappearanceCreate)
+        public async Task<ActionResult> Post([FromForm] DisappearanceCreate disappearanceCreate)
         {
             try
             {
@@ -97,7 +97,7 @@ namespace NicamalWebApi.Controllers
                 _dbContext.Add(disappearance);
                 await _dbContext.SaveChangesAsync();
 
-                var disappearanceDetail = _mapper.Map<DisappearanceResponse>(disappearance);
+                var disappearanceDetail = _mapper.Map<DisappearanceDetail>(disappearance);
                 
                 return new CreatedAtRouteResult("GetSingleDisappearance", new {id = disappearance.Id}, disappearanceDetail);
             }
