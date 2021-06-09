@@ -19,9 +19,8 @@ namespace NicamalWebApi.Migrations
 
             modelBuilder.Entity("NicamalWebApi.Models.Disappearance", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("Country")
                         .HasColumnType("longtext");
@@ -74,12 +73,11 @@ namespace NicamalWebApi.Migrations
 
             modelBuilder.Entity("NicamalWebApi.Models.Publication", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
 
-                    b.Property<DateTime>("BirthDate")
-                        .HasColumnType("datetime(6)");
+                    b.Property<string>("Age")
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
@@ -111,8 +109,8 @@ namespace NicamalWebApi.Migrations
                     b.Property<DateTime>("UpdateAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<double>("Weight")
                         .HasColumnType("double");
@@ -126,9 +124,8 @@ namespace NicamalWebApi.Migrations
 
             modelBuilder.Entity("NicamalWebApi.Models.Report", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
@@ -136,17 +133,17 @@ namespace NicamalWebApi.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("longtext");
 
-                    b.Property<int>("PublicationId")
-                        .HasColumnType("int");
+                    b.Property<string>("PublicationId")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("Reason")
                         .HasColumnType("longtext");
 
-                    b.Property<int>("ReportedUserId")
-                        .HasColumnType("int");
+                    b.Property<string>("ReportedUserId")
+                        .HasColumnType("varchar(255)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
 
@@ -164,9 +161,8 @@ namespace NicamalWebApi.Migrations
 
             modelBuilder.Entity("NicamalWebApi.Models.User", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("Address")
                         .HasColumnType("longtext");
@@ -222,9 +218,7 @@ namespace NicamalWebApi.Migrations
                 {
                     b.HasOne("NicamalWebApi.Models.User", "User")
                         .WithMany("Publications")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });
@@ -233,21 +227,15 @@ namespace NicamalWebApi.Migrations
                 {
                     b.HasOne("NicamalWebApi.Models.Publication", "Publication")
                         .WithOne("Report")
-                        .HasForeignKey("NicamalWebApi.Models.Report", "PublicationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("NicamalWebApi.Models.Report", "PublicationId");
 
                     b.HasOne("NicamalWebApi.Models.User", "ReportedUser")
                         .WithOne("Reported")
-                        .HasForeignKey("NicamalWebApi.Models.Report", "ReportedUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("NicamalWebApi.Models.Report", "ReportedUserId");
 
                     b.HasOne("NicamalWebApi.Models.User", "User")
                         .WithOne("Report")
-                        .HasForeignKey("NicamalWebApi.Models.Report", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("NicamalWebApi.Models.Report", "UserId");
 
                     b.Navigation("Publication");
 

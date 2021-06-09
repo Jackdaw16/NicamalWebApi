@@ -39,7 +39,7 @@ namespace NicamalWebApi.Controllers
         
         [HttpGet("{id}", Name = "GetSingleUser")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<ActionResult<UserResponseWhenLoggedIn>> Get(int id)
+        public async Task<ActionResult<UserResponseWhenLoggedIn>> Get(string id)
         {
             try
             {
@@ -71,7 +71,8 @@ namespace NicamalWebApi.Controllers
                 }
 
                 User user = _mapper.Map<User>(userRegister);
-                
+
+                user.Id = Guid.NewGuid().ToString();
                 user.IsShelter = false;
                 user.Verify = false;
                 user.CreatedAt = DateTime.Now;

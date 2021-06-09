@@ -53,7 +53,7 @@ namespace NicamalWebApi.Controllers
         }
 
         [HttpGet("detail", Name = "GetSinglePublication")]
-        public async Task<ActionResult<PublicationDetail>> Get([FromQuery] int id)
+        public async Task<ActionResult<PublicationDetail>> Get([FromQuery] string id)
         {
             try
             {
@@ -124,6 +124,7 @@ namespace NicamalWebApi.Controllers
             try
             {
                 var localPublicationCreate = publicationCreate;
+                localPublicationCreate.Id = Guid.NewGuid().ToString();
                 localPublicationCreate.CreatedAt = DateTime.Now;
                 localPublicationCreate.UpdateAt = DateTime.Now;
             
@@ -156,7 +157,7 @@ namespace NicamalWebApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Put(int id, [FromForm] PublicationCreate publicationCreate)
+        public async Task<ActionResult> Put(string id, [FromForm] PublicationCreate publicationCreate)
         {
             try
             {
@@ -194,7 +195,7 @@ namespace NicamalWebApi.Controllers
         }
 
         [HttpPatch("{id}")]
-        public async Task<ActionResult> Patch(int id, [FromBody] JsonPatchDocument<PublicationCreate> patchDocument)
+        public async Task<ActionResult> Patch(string id, [FromBody] JsonPatchDocument<PublicationCreate> patchDocument)
         {
             if (patchDocument == null)
                 return BadRequest();
@@ -219,7 +220,7 @@ namespace NicamalWebApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(string id)
         {
             try
             {

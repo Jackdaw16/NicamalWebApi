@@ -51,7 +51,7 @@ namespace NicamalWebApi.Controllers
         }
 
         [HttpGet("{id}", Name = "GetSingleReport")]
-        public async Task<ActionResult<ReportResponse>> Get(int id)
+        public async Task<ActionResult<ReportResponse>> Get(string id)
         {
             try
             {

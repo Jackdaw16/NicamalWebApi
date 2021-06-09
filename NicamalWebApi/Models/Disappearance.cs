@@ -4,7 +4,7 @@ namespace NicamalWebApi.Models
 {
     public class Disappearance
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string Name { get; set; }
         public string Image { get; set; }
         public string TelephoneContact { get; set; }
