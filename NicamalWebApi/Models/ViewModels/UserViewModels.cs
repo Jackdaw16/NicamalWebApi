@@ -6,7 +6,7 @@ namespace NicamalWebApi.Models.ViewModels
 {
     public class UserForPublication
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string Address { get; set; }
         public string Province { get; set; }
         public string Country { get; set; }
@@ -15,7 +15,7 @@ namespace NicamalWebApi.Models.ViewModels
 
     public class UserResponseWhenLoggedIn
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string Name { get; set; }
         public string SurNames { get; set; }
         public string Email { get; set; }
@@ -31,7 +31,7 @@ namespace NicamalWebApi.Models.ViewModels
 
     public class UserResponse
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string Name { get; set; }
         public string SurNames { get; set; }
         public string Email { get; set; }
@@ -45,7 +45,7 @@ namespace NicamalWebApi.Models.ViewModels
 
     public class UserForPublicationDetail
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string Name { get; set; }
         public string Country { get; set; }
         public string Image { get; set; }
@@ -57,6 +57,7 @@ namespace NicamalWebApi.Models.ViewModels
 
     public class UserRegister
     {
+        public string Id { get; set; }
         [Required]
         public string Name { get; set; }
         public string SurNames { get; set; }
@@ -68,7 +69,6 @@ namespace NicamalWebApi.Models.ViewModels
         public string Password { get; set; }
         [Required]
         public string TelephoneContact { get; set; }
-        [Required]
         public string Country { get; set; }
         [Required]
         public string Province { get; set; }

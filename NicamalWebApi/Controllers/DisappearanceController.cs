@@ -54,7 +54,7 @@ namespace NicamalWebApi.Controllers
         }
 
         [HttpGet("detail", Name = "GetSingleDisappearance")]
-        public async Task<ActionResult<DisappearanceDetail>> Get([FromQuery] int id)
+        public async Task<ActionResult<DisappearanceDetail>> Get([FromQuery] string id)
         {
             try
             {
@@ -78,6 +78,7 @@ namespace NicamalWebApi.Controllers
             try
             {
                 var localDisappearance = disappearanceCreate;
+                localDisappearance.Id = Guid.NewGuid().ToString();
                 localDisappearance.CreatedAt = DateTime.Now;
 
                 var disappearance = _mapper.Map<Disappearance>(localDisappearance);
@@ -109,7 +110,7 @@ namespace NicamalWebApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(string id)
         {
             try
             {
