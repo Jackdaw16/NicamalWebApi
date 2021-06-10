@@ -8,6 +8,8 @@ namespace NicamalWebApi
     {
         public Mappings()
         {
+            CreateMap<Provinces, ProvincesResponse>();
+            
             CreateMap<Disappearance, DisappearanceDetail>().ReverseMap();
             CreateMap<Disappearance, DisappearanceListResponse>().ReverseMap();
             CreateMap<Disappearance, DisappearanceCreate>().ReverseMap();    

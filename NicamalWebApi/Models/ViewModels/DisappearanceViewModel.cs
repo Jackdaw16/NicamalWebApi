@@ -35,13 +35,11 @@ namespace NicamalWebApi.Models.ViewModels
         [Required]
         public string Name { get; set; }
         [Required]
-        [TypeFileValidation]
         public IFormFile Image { get; set; }
         [Required] 
         public string TelephoneContact { get; set; }
         [Required]
         public string Description { get; set; }
-        [Required]
         public string Country { get; set; }
         [Required]
         public string Province { get; set; }
