@@ -56,9 +56,8 @@ namespace NicamalWebApi.Migrations
 
             modelBuilder.Entity("NicamalWebApi.Models.Images", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("Image")
                         .HasColumnType("longtext");
@@ -69,6 +68,44 @@ namespace NicamalWebApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Images");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "fa34019a-9495-44c9-a517-8f3539e666bf",
+                            Image = "https://192.168.1.136:5001/usersprofile/dog.png",
+                            Name = "dog"
+                        },
+                        new
+                        {
+                            Id = "03d707ac-c5cd-4c0c-8947-764e0da2499d",
+                            Image = "https://192.168.1.136:5001/usersprofile/cat.png",
+                            Name = "cat"
+                        },
+                        new
+                        {
+                            Id = "9f8f750f-109e-473b-8a62-a90a6fd1f483",
+                            Image = "https://192.168.1.136:5001/usersprofile/parrot.png",
+                            Name = "parrot"
+                        },
+                        new
+                        {
+                            Id = "cd7f5dfa-33fc-4d7a-805f-d2ba9778fd27",
+                            Image = "https://192.168.1.136:5001/usersprofile/rabbit.png",
+                            Name = "rabbit"
+                        },
+                        new
+                        {
+                            Id = "7618dbd5-5706-4561-ac9f-c0677418c5f7",
+                            Image = "https://192.168.1.136:5001/usersprofile/panda.png",
+                            Name = "panda"
+                        },
+                        new
+                        {
+                            Id = "f8bdabf1-4119-408e-9d8b-b5d06a95513e",
+                            Image = "https://192.168.1.136:5001/usersprofile/fish.png",
+                            Name = "fish"
+                        });
                 });
 
             modelBuilder.Entity("NicamalWebApi.Models.Provinces", b =>
@@ -163,7 +200,7 @@ namespace NicamalWebApi.Migrations
                         new
                         {
                             Id = 16,
-                            Name = "A Coruña"
+                            Name = "La Coruña"
                         },
                         new
                         {

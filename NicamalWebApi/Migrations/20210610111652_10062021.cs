@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace NicamalWebApi.Migrations
 {
-    public partial class NicamalTables : Migration
+    public partial class _10062021 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -45,8 +45,8 @@ namespace NicamalWebApi.Migrations
                 name: "Images",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Id = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     Name = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Image = table.Column<string>(type: "longtext", nullable: true)
@@ -55,6 +55,21 @@ namespace NicamalWebApi.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Images", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Provinces",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Provinces", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -177,6 +192,78 @@ namespace NicamalWebApi.Migrations
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
+            migrationBuilder.InsertData(
+                table: "Images",
+                columns: new[] { "Id", "Image", "Name" },
+                values: new object[,]
+                {
+                    { "fa34019a-9495-44c9-a517-8f3539e666bf", "https://192.168.1.136:5001/usersprofile/dog.png", "dog" },
+                    { "03d707ac-c5cd-4c0c-8947-764e0da2499d", "https://192.168.1.136:5001/usersprofile/cat.png", "cat" },
+                    { "9f8f750f-109e-473b-8a62-a90a6fd1f483", "https://192.168.1.136:5001/usersprofile/parrot.png", "parrot" },
+                    { "cd7f5dfa-33fc-4d7a-805f-d2ba9778fd27", "https://192.168.1.136:5001/usersprofile/rabbit.png", "rabbit" },
+                    { "7618dbd5-5706-4561-ac9f-c0677418c5f7", "https://192.168.1.136:5001/usersprofile/panda.png", "panda" },
+                    { "f8bdabf1-4119-408e-9d8b-b5d06a95513e", "https://192.168.1.136:5001/usersprofile/fish.png", "fish" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Provinces",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 36, "Pontevedra" },
+                    { 35, "Las Palmas" },
+                    { 34, "Palencia" },
+                    { 33, "Ourense" },
+                    { 30, "Málaga" },
+                    { 31, "Murcia" },
+                    { 37, "La Rioja" },
+                    { 29, "Madrid" },
+                    { 28, "Lugo" },
+                    { 32, "Navarra" },
+                    { 38, "Salamanca" },
+                    { 41, "Soria" },
+                    { 40, "Sevilla" },
+                    { 27, "Lleida" },
+                    { 42, "Tarragona" },
+                    { 43, "Santa Crus de Tenerife" },
+                    { 44, "Teruel" },
+                    { 45, "Toledo" },
+                    { 46, "Valencia" },
+                    { 47, "Valladolid" },
+                    { 48, "Vizcaya" },
+                    { 49, "Zamora" },
+                    { 50, "Zaragoza" },
+                    { 39, "Segovia" },
+                    { 26, "León" },
+                    { 23, "Huesca" },
+                    { 24, "Baleares" },
+                    { 1, "Álava" },
+                    { 2, "Albacete" },
+                    { 3, "Alicante" },
+                    { 4, "Almería" },
+                    { 5, "Asturias" },
+                    { 6, "Ávila" },
+                    { 7, "Badajoz" },
+                    { 8, "Barcelona" },
+                    { 9, "Burgos" },
+                    { 10, "Cáceres" },
+                    { 11, "Cádiz" },
+                    { 12, "Cantabria" },
+                    { 13, "Castellón" },
+                    { 14, "Ciudad Real" },
+                    { 15, "Córdoba" },
+                    { 16, "La Coruña" },
+                    { 17, "Cuenca" },
+                    { 18, "Girona" },
+                    { 19, "Granada" },
+                    { 20, "Guadalajara" },
+                    { 21, "Gipuzkoa" },
+                    { 22, "Huelva" },
+                    { 51, "Ceuta" },
+                    { 25, "Jaén" },
+                    { 52, "Melilla" }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Publications_UserId",
                 table: "Publications",
@@ -214,6 +301,9 @@ namespace NicamalWebApi.Migrations
 
             migrationBuilder.DropTable(
                 name: "Images");
+
+            migrationBuilder.DropTable(
+                name: "Provinces");
 
             migrationBuilder.DropTable(
                 name: "Reports");

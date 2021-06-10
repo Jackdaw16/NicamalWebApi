@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
 using NicamalWebApi.Models;
 
 namespace NicamalWebApi.DbContexts
@@ -18,6 +19,15 @@ namespace NicamalWebApi.DbContexts
 
             modelBuilder.Entity<User>().HasOne(a => a.Reported).WithOne(b => b.ReportedUser)
                 .HasForeignKey<Report>(b => b.ReportedUserId);
+
+            modelBuilder.Entity<Images>().HasData(
+                new Images{Id = Guid.NewGuid().ToString(), Name = "dog", Image = "https://192.168.1.136:5001/usersprofile/dog.png"},
+                new Images{Id = Guid.NewGuid().ToString(), Name = "cat", Image = "https://192.168.1.136:5001/usersprofile/cat.png"},
+                new Images{Id = Guid.NewGuid().ToString(), Name = "parrot", Image = "https://192.168.1.136:5001/usersprofile/parrot.png"},
+                new Images{Id = Guid.NewGuid().ToString(), Name = "rabbit", Image = "https://192.168.1.136:5001/usersprofile/rabbit.png"},
+                new Images{Id = Guid.NewGuid().ToString(), Name = "panda", Image = "https://192.168.1.136:5001/usersprofile/panda.png"},
+                new Images{Id = Guid.NewGuid().ToString(), Name = "fish", Image = "https://192.168.1.136:5001/usersprofile/fish.png"}
+            );
 
             modelBuilder.Entity<Provinces>().HasData(
                 new Provinces{ Id = 1, Name = "Álava"},

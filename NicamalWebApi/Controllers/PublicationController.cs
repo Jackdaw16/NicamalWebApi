@@ -33,7 +33,7 @@ namespace NicamalWebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PublicationsResponseForList>>> Get([FromQuery] Pagination pagination)
+        public async Task<ActionResult<IEnumerable<PublicationsList>>> Get([FromQuery] Pagination pagination)
         {
             try
             {
@@ -44,7 +44,7 @@ namespace NicamalWebApi.Controllers
                 
                 var publications = await queryable.Paginate(pagination).Include(p => p.User).OrderByDescending(x => x.CreatedAt).ToListAsync();
 
-                return _mapper.Map<List<PublicationsResponseForList>>(publications);
+                return _mapper.Map<List<PublicationsList>>(publications);
             }
             catch (Exception e)
             {
@@ -73,7 +73,7 @@ namespace NicamalWebApi.Controllers
         }
 
         [HttpGet("filters")]
-        public async Task<ActionResult<IEnumerable<PublicationsResponseForList>>> GetFromFilters(
+        public async Task<ActionResult<IEnumerable<PublicationsList>>> GetFromFilters(
             [FromQuery] PublicationsFilters filters)
         {
             try
@@ -110,7 +110,7 @@ namespace NicamalWebApi.Controllers
                 
                 var publications = await queryable.Paginate(filters.Page).Include(p => p.User).OrderByDescending(x => x.CreatedAt).ToListAsync();
 
-                return _mapper.Map<List<PublicationsResponseForList>>(publications);
+                return _mapper.Map<List<PublicationsList>>(publications);
             }
             catch (Exception e)
             {

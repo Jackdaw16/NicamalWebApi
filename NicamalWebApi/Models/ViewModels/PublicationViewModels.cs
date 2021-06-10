@@ -5,7 +5,7 @@ using NicamalWebApi.Validation;
 
 namespace NicamalWebApi.Models.ViewModels
 {
-    public class PublicationsResponseForList
+    public class PublicationsList
     {
         public string Id { get; set; }
         public string Name { get; set; }
