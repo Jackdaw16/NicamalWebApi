@@ -7,7 +7,7 @@
         
         public Pagination Page
         {
-            get => new Pagination() { PageNumber = PageNumber, PageSize = PageSize};
+            get => new Pagination() { Page = PageNumber, PageSize = PageSize};
         }
         
         public string Specie { get; set; }

@@ -33,13 +33,19 @@ namespace NicamalWebApi
             CreateMap<PublicationDetail, Publication>().ForMember(a => a.User,
                 b => b.MapFrom(o => o.User));
             
-            CreateMap<Report, ReportResponse>()
+            CreateMap<Report, ReportList>()
+                .ForMember(a => a.Publication,
+                    b => b.MapFrom(o => o.Publication));
+            
+            CreateMap<Report, ReportDetail>()
                 .ForMember(a => a.Publication,
                     b => b.MapFrom(o => o.Publication))
                 .ForMember(a => a.UserReported,
                     b => b.MapFrom(o => o.ReportedUser))
                 .ForMember(a => a.User,
                     b => b.MapFrom(o => o.User));
+
+            CreateMap<Report, ReportCreate>().ReverseMap();
         }
     }
 }
