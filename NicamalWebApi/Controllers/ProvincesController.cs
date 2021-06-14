@@ -14,19 +14,19 @@ namespace NicamalWebApi.Controllers
     [ApiController]
     public class ProvincesController: ControllerBase
     {
-        private readonly ApplicationDbContext _applicationDbContext;
+        private readonly ApplicationDbContext _dbContext;
         private readonly IMapper _mapper;
 
-        public ProvincesController(ApplicationDbContext applicationDbContext, IMapper mapper)
+        public ProvincesController(ApplicationDbContext dbContext, IMapper mapper)
         {
-            _applicationDbContext = applicationDbContext;
+            _dbContext = dbContext;
             _mapper = mapper;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProvincesResponse>>> Get()
         {
-            var province = await _applicationDbContext.Provinces.OrderBy(p => p.Name).ToListAsync();
+            var province = await _dbContext.Provinces.OrderBy(p => p.Name).ToListAsync();
 
             return _mapper.Map<List<ProvincesResponse>>(province);
         }

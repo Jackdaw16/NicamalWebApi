@@ -156,15 +156,16 @@ namespace NicamalWebApi.Controllers
             }
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult> Put(string id, [FromForm] PublicationCreate publicationCreate)
+        [HttpPut]
+        public async Task<ActionResult> Put([FromQuery] string id, [FromForm] PublicationCreate publicationCreate)
         {
             try
             {
                 var publication = await _dbContext.Publications.FirstOrDefaultAsync(p => p.Id == id);
                 if (publication == null)
                     return NotFound();
-                
+
+                var publicationId = publication.Id;
                 var createdAt = publication.CreatedAt;
 
                 publication = _mapper.Map(publicationCreate, publication);
@@ -181,6 +182,7 @@ namespace NicamalWebApi.Controllers
                     }
                 }
 
+                publication.Id = publicationId;
                 publication.CreatedAt = createdAt;
                 publication.UpdateAt = DateTime.Now;
 
@@ -219,8 +221,8 @@ namespace NicamalWebApi.Controllers
             return Ok();
         }
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(string id)
+        [HttpDelete]
+        public async Task<ActionResult> Delete([FromQuery] string id)
         {
             try
             {

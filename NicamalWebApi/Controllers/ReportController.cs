@@ -96,6 +96,28 @@ namespace NicamalWebApi.Controllers
 
             }
         }
+
+        [HttpDelete]
+        public async Task<ActionResult> Delete([FromQuery] string id)
+        {
+            try
+            {
+                var report = await _dbContext.Reports
+                    .FirstOrDefaultAsync(d => d.Id == id);
+
+                if (report == null)
+                    return NotFound();
+
+                _dbContext.Reports.Remove(report);
+                await _dbContext.SaveChangesAsync();
+
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
         
         
     }

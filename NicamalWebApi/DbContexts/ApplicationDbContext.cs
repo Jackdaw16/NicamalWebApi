@@ -92,6 +92,8 @@ namespace NicamalWebApi.DbContexts
         public DbSet<Report> Reports { get; set; }
         public DbSet<Images> Images { get; set; }
         public DbSet<Provinces> Provinces { get; set; }
+
+        public DbSet<Sanction> Sanctions { get; set; }
         
     }
 }

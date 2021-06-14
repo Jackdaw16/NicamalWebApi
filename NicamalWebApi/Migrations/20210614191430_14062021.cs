@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace NicamalWebApi.Migrations
 {
-    public partial class _10062021 : Migration
+    public partial class _14062021 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -99,7 +99,6 @@ namespace NicamalWebApi.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Verify = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     IsShelter = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    IsBanned = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
@@ -143,6 +142,30 @@ namespace NicamalWebApi.Migrations
                     table.PrimaryKey("PK_Publications", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Publications_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Sanctions",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Reason = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    UserId = table.Column<string>(type: "varchar(255)", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Sanctions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Sanctions_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -197,12 +220,12 @@ namespace NicamalWebApi.Migrations
                 columns: new[] { "Id", "Image", "Name" },
                 values: new object[,]
                 {
-                    { "fa34019a-9495-44c9-a517-8f3539e666bf", "https://192.168.1.136:5001/usersprofile/dog.png", "dog" },
-                    { "03d707ac-c5cd-4c0c-8947-764e0da2499d", "https://192.168.1.136:5001/usersprofile/cat.png", "cat" },
-                    { "9f8f750f-109e-473b-8a62-a90a6fd1f483", "https://192.168.1.136:5001/usersprofile/parrot.png", "parrot" },
-                    { "cd7f5dfa-33fc-4d7a-805f-d2ba9778fd27", "https://192.168.1.136:5001/usersprofile/rabbit.png", "rabbit" },
-                    { "7618dbd5-5706-4561-ac9f-c0677418c5f7", "https://192.168.1.136:5001/usersprofile/panda.png", "panda" },
-                    { "f8bdabf1-4119-408e-9d8b-b5d06a95513e", "https://192.168.1.136:5001/usersprofile/fish.png", "fish" }
+                    { "3d1d371f-cb2a-4abd-af27-26ad5ef1bcb8", "https://192.168.1.136:5001/usersprofile/dog.png", "dog" },
+                    { "303f6a44-8c3d-4a8b-9887-0cdb42650225", "https://192.168.1.136:5001/usersprofile/cat.png", "cat" },
+                    { "769a8853-b48e-4120-b0a7-dbf9544c4068", "https://192.168.1.136:5001/usersprofile/parrot.png", "parrot" },
+                    { "468b0c87-cb18-4212-832d-d675cd4c3ac0", "https://192.168.1.136:5001/usersprofile/rabbit.png", "rabbit" },
+                    { "63d1d7a3-d803-438b-a882-fa7ae39a8e4f", "https://192.168.1.136:5001/usersprofile/panda.png", "panda" },
+                    { "6fc84df8-4968-4f20-96c0-41be4ffd5f75", "https://192.168.1.136:5001/usersprofile/fish.png", "fish" }
                 });
 
             migrationBuilder.InsertData(
@@ -288,6 +311,11 @@ namespace NicamalWebApi.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Sanctions_UserId",
+                table: "Sanctions",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Users_Email",
                 table: "Users",
                 column: "Email",
@@ -307,6 +335,9 @@ namespace NicamalWebApi.Migrations
 
             migrationBuilder.DropTable(
                 name: "Reports");
+
+            migrationBuilder.DropTable(
+                name: "Sanctions");
 
             migrationBuilder.DropTable(
                 name: "Publications");

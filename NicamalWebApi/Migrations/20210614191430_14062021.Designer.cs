@@ -9,8 +9,8 @@ using NicamalWebApi.DbContexts;
 namespace NicamalWebApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210610111652_10062021")]
-    partial class _10062021
+    [Migration("20210614191430_14062021")]
+    partial class _14062021
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -74,37 +74,37 @@ namespace NicamalWebApi.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "fa34019a-9495-44c9-a517-8f3539e666bf",
+                            Id = "3d1d371f-cb2a-4abd-af27-26ad5ef1bcb8",
                             Image = "https://192.168.1.136:5001/usersprofile/dog.png",
                             Name = "dog"
                         },
                         new
                         {
-                            Id = "03d707ac-c5cd-4c0c-8947-764e0da2499d",
+                            Id = "303f6a44-8c3d-4a8b-9887-0cdb42650225",
                             Image = "https://192.168.1.136:5001/usersprofile/cat.png",
                             Name = "cat"
                         },
                         new
                         {
-                            Id = "9f8f750f-109e-473b-8a62-a90a6fd1f483",
+                            Id = "769a8853-b48e-4120-b0a7-dbf9544c4068",
                             Image = "https://192.168.1.136:5001/usersprofile/parrot.png",
                             Name = "parrot"
                         },
                         new
                         {
-                            Id = "cd7f5dfa-33fc-4d7a-805f-d2ba9778fd27",
+                            Id = "468b0c87-cb18-4212-832d-d675cd4c3ac0",
                             Image = "https://192.168.1.136:5001/usersprofile/rabbit.png",
                             Name = "rabbit"
                         },
                         new
                         {
-                            Id = "7618dbd5-5706-4561-ac9f-c0677418c5f7",
+                            Id = "63d1d7a3-d803-438b-a882-fa7ae39a8e4f",
                             Image = "https://192.168.1.136:5001/usersprofile/panda.png",
                             Name = "panda"
                         },
                         new
                         {
-                            Id = "f8bdabf1-4119-408e-9d8b-b5d06a95513e",
+                            Id = "6fc84df8-4968-4f20-96c0-41be4ffd5f75",
                             Image = "https://192.168.1.136:5001/usersprofile/fish.png",
                             Name = "fish"
                         });
@@ -474,6 +474,27 @@ namespace NicamalWebApi.Migrations
                     b.ToTable("Reports");
                 });
 
+            modelBuilder.Entity("NicamalWebApi.Models.Sanction", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Reason")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Sanctions");
+                });
+
             modelBuilder.Entity("NicamalWebApi.Models.User", b =>
                 {
                     b.Property<string>("Id")
@@ -493,9 +514,6 @@ namespace NicamalWebApi.Migrations
 
                     b.Property<string>("Image")
                         .HasColumnType("longtext");
-
-                    b.Property<bool>("IsBanned")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("IsShelter")
                         .HasColumnType("tinyint(1)");
@@ -555,6 +573,15 @@ namespace NicamalWebApi.Migrations
                     b.Navigation("Publication");
 
                     b.Navigation("ReportedUser");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("NicamalWebApi.Models.Sanction", b =>
+                {
+                    b.HasOne("NicamalWebApi.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });

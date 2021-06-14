@@ -25,13 +25,13 @@ namespace NicamalWebApi.Controllers
     [ApiController]
     public class UserController: ControllerBase
     {
-        private readonly ApplicationDbContext _applicationDbContext;
+        private readonly ApplicationDbContext _dbContext;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
         
-        public UserController(ApplicationDbContext applicationDbContext, IMapper mapper, IConfiguration configuration)
+        public UserController(ApplicationDbContext dbContext, IMapper mapper, IConfiguration configuration)
         {
-            _applicationDbContext = applicationDbContext;
+            _dbContext = dbContext;
             _mapper = mapper;
             _configuration = configuration;
 
@@ -43,7 +43,7 @@ namespace NicamalWebApi.Controllers
         {
             try
             {
-                User user = await _applicationDbContext.Users
+                User user = await _dbContext.Users
                     .FirstOrDefaultAsync(u => u.Id == id);
 
                 if (user == null)
@@ -52,6 +52,29 @@ namespace NicamalWebApi.Controllers
                 }
 
                 return _mapper.Map<UserResponseWhenLoggedIn>(user);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+        
+        [HttpGet("detail")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<ActionResult<User>> GetDetail ([FromQuery] string id)
+        {
+            try
+            {
+                User user = await _dbContext.Users
+                    .Include(u => u.Reported).ThenInclude(r => r.User)
+                    .FirstOrDefaultAsync(u => u.Id == id);
+
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                return user;
             }
             catch (Exception e)
             {
@@ -78,8 +101,8 @@ namespace NicamalWebApi.Controllers
                 user.CreatedAt = DateTime.Now;
                 user.UpdatedAt = DateTime.Now;
                 
-                _applicationDbContext.Add(user);
-                await _applicationDbContext.SaveChangesAsync();
+                _dbContext.Add(user);
+                await _dbContext.SaveChangesAsync();
                 
                 return new CreatedAtRouteResult("GetSingleUser", new {user.Id}, _mapper.Map<UserResponseWhenLoggedIn>(user));
 
@@ -91,15 +114,23 @@ namespace NicamalWebApi.Controllers
         }
         
         [HttpPost("login")]
-        public async Task<ActionResult<UserLoggedIn>> LogingUser([FromBody] UserLogIn userLogin)
+        public async Task<ActionResult<UserLoggedIn>> LoggingUser([FromBody] UserLogIn userLogin)
         {
-            User user = await _applicationDbContext.Users.FirstOrDefaultAsync(u => u.Email == userLogin.Email);
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == userLogin.Email);
 
             if (user == null)
             {
                 return NotFound();
             }
-            
+
+            var sanction = await _dbContext.Sanctions
+                .Include(u => u.User)
+                .FirstOrDefaultAsync(s => s.User.Id == user.Id);
+            if (sanction != null)
+            {
+                return new CreatedAtRouteResult("GetSanction", new {sanction.Id}, sanction);
+            }
+
             using (SHA256 sha256 = SHA256.Create())
             {
                 userLogin.Password = String.Concat(sha256.ComputeHash(Encoding.UTF8.GetBytes(userLogin.Password))
