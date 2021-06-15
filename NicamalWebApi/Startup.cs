@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NicamalWebApi.DbContexts;
@@ -34,6 +35,9 @@ namespace NicamalWebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var builder = services.AddMvc();
+            services.AddSingleton<IConfigureOptions<MvcOptions>, ConfigureMvcOptions>();
+            
             services.AddTransient<IImageStorage, ImageStorage>();
             services.AddHttpContextAccessor();
             
@@ -111,6 +115,7 @@ namespace NicamalWebApi
             }
 
             app.UseHttpsRedirection();
+            
 
             app.UseAuthentication();
 

@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Authentication;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -14,6 +16,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using MimeKit;
 using NicamalWebApi.DbContexts;
 using NicamalWebApi.Models;
 using NicamalWebApi.Models.ViewModels;
@@ -103,6 +106,24 @@ namespace NicamalWebApi.Controllers
                 
                 _dbContext.Add(user);
                 await _dbContext.SaveChangesAsync();
+                
+                var message = new MimeMessage();
+                message.From.Add(new MailboxAddress("Nicamal App", "nicamal.app@gmail.com"));
+                message.To.Add(new MailboxAddress("Alejandro", "alejandro.demetrio13@gmail.com"));
+                message.Subject = "Test email";
+                message.Body = new TextPart("plain")
+                {
+                    Text = "Hi!!!"
+                };
+                using (var client = new SmtpClient())
+                {
+                    client.CheckCertificateRevocation = false;
+                    await client.ConnectAsync("smtp.gmail.com", 465, true);
+                    await client.AuthenticateAsync("nicamal.app@gmail.com", "nicamal_app2021");
+                    await client.SendAsync(message);
+                    
+                    client.Disconnect(true);
+                }
                 
                 return new CreatedAtRouteResult("GetSingleUser", new {user.Id}, _mapper.Map<UserResponseWhenLoggedIn>(user));
 
