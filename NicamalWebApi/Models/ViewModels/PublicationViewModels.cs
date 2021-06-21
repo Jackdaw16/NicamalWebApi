@@ -82,4 +82,11 @@ namespace NicamalWebApi.Models.ViewModels
         [Required]
         public string UserId { get; set; }
     }
+
+    public class PublicationCount
+    {
+        public string Id { get; set; }
+        public bool IsUrgent { get; set; }
+    }
+    
 }

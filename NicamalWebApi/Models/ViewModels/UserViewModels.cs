@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
 
@@ -91,5 +92,44 @@ namespace NicamalWebApi.Models.ViewModels
     {
         public UserResponseWhenLoggedIn UserResponse { get; set; }
         public string Token { get; set; }
+    }
+    
+    public class UserShelter
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Image { get; set; }
+        public string Address { get; set; }
+        public string Province { get; set; }
+        public string Country { get; set; }
+        
+        public List<PublicationCount> Publications { get; set; }
+        public int PublicationCount { get; set; }
+    }
+
+    public class UserShelterList
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Image { get; set; }
+        public string Address { get; set; }
+        public string Province { get; set; }
+        public string Country { get; set; }
+        public int PublicationCount { get; set; }
+    }
+
+    public class UserShelterDetail
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Image { get; set; }
+        public string UrlDonation { get; set; }
+        public string History { get; set; }
+        public string IsShelter { get; set; }
+        public string Address { get; set; }
+        public string Province { get; set; }
+        public string Country { get; set; }
+        
+        public List<PublicationCount> Publications { get; set; }
     }
 }

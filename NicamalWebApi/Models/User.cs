@@ -15,6 +15,8 @@ namespace NicamalWebApi.Models
         public string Country { get; set; }
         public string Province { get; set; }
         public string Address { get; set; }
+        public string History { get; set; }
+        public string UrlDonation { get; set; }
         public bool Verify { get; set; }
         public bool IsShelter { get; set; }
         

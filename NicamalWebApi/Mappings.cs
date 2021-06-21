@@ -8,6 +8,12 @@ namespace NicamalWebApi
     {
         public Mappings()
         {
+            CreateMap<UserShelter, UserShelterList>().ReverseMap();
+            CreateMap<User, UserShelter>()
+                .ForMember(a => a.Publications,
+                    b => b.MapFrom(o => o.Publications));
+            CreateMap<User, UserShelterDetail>().ReverseMap();
+            
             CreateMap<Provinces, ProvincesResponse>();
             
             CreateMap<Disappearance, DisappearanceDetail>().ReverseMap();
@@ -32,6 +38,7 @@ namespace NicamalWebApi
                 b => b.MapFrom(o => o.User));
             CreateMap<PublicationDetail, Publication>().ForMember(a => a.User,
                 b => b.MapFrom(o => o.User));
+            CreateMap<Publication, PublicationCount>().ReverseMap();
             
             CreateMap<Report, ReportList>()
                 .ForMember(a => a.Publication,
