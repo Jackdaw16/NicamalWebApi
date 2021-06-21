@@ -1,0 +1,35 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        .container {
+            padding: 16px 32px;
+            background-color: #F5F5F5;
+        }
+
+        .subContainer {
+            padding: 16px;
+            background-color: white;
+            box-shadow: rgba(0, 0, 0, 0.50) 0px 3px 8px;
+            border-radius: 25px;
+        }
+        
+        #header {
+            background-image: url("data:image/png;base64,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");
+            width: 100px;
+            height: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="subContainer">
+            <div id="header"></div>
+            <h1>Welcome to Nicamal App {name}</h1>
+            <p>Please, click to under button to verify your account</p>
+        </div>
+    </div>
+</body>
+</html>

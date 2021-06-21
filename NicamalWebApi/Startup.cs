@@ -37,7 +37,8 @@ namespace NicamalWebApi
         {
             var builder = services.AddMvc();
             services.AddSingleton<IConfigureOptions<MvcOptions>, ConfigureMvcOptions>();
-            
+
+            services.AddTransient<IMailKitService, MailKitService>();
             services.AddTransient<IImageStorage, ImageStorage>();
             services.AddHttpContextAccessor();
             

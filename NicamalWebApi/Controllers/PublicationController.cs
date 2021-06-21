@@ -108,7 +108,7 @@ namespace NicamalWebApi.Controllers
 
                 await HttpContext.AddPaginationParams(queryable, filters.PageSize);
                 
-                var publications = await queryable.Paginate(filters.Page).Include(p => p.User).OrderByDescending(x => x.CreatedAt).ToListAsync();
+                var publications = await queryable.Paginate(filters.Pagination).Include(p => p.User).OrderByDescending(x => x.CreatedAt).ToListAsync();
 
                 return _mapper.Map<List<PublicationsList>>(publications);
             }

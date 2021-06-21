@@ -2,12 +2,12 @@
 {
     public class PublicationsFilters
     {
-        public int PageNumber { get; set; } = 1;
+        public int Page { get; set; } = 1;
         public int PageSize { get; set; } = 6;
         
-        public Pagination Page
+        public Pagination Pagination
         {
-            get => new Pagination() { Page = PageNumber, PageSize = PageSize};
+            get => new Pagination() { Page = Page, PageSize = PageSize};
         }
         
         public string Specie { get; set; }
