@@ -171,5 +171,28 @@ namespace NicamalWebApi.Controllers
                 Token = tokenHandler.WriteToken(createdToken)
             };
         }
+        
+        [HttpDelete]
+        [Authorize]
+        public async Task<ActionResult> Delete([FromQuery] string id)
+        {
+            try
+            {
+                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
+
+                if (user == null)
+                    return NotFound();
+
+                _dbContext.Users.Remove(user);
+                await _dbContext.SaveChangesAsync();
+
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+            
+        }
     }
 }
