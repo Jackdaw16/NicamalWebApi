@@ -80,6 +80,22 @@ namespace NicamalWebApi.Models.ViewModels
         public DateTime UpdatedAt { get; set; }
     }
 
+    public class UserUpdate
+    {
+        [Required]
+        public string Name { get; set; }
+        public string SurNames { get; set; }
+        public string Image { get; set; }
+        [Required]
+        public string TelephoneContact { get; set; }
+        public string Country { get; set; }
+        [Required]
+        public string Province { get; set; }
+        [Required]
+        public string Address { get; set; }
+        public DateTime UpdatedAt { get; set; }
+    }
+
     public class UserLogIn
     {
         [Required]
@@ -176,7 +192,7 @@ namespace NicamalWebApi.Models.ViewModels
         public string Country { get; set; }
     }
 
-    public class UserShelterPatch
+    public class UserPatch
     {
         public string Email { get; set; }
         public string Password { get; set; }

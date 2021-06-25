@@ -120,6 +120,8 @@ namespace NicamalWebApi.Controllers
                 if (disappearance == null)
                     return NotFound();
 
+                await _imageStorage.DeleteFile(disappearance.Image, Container);
+
                 _dbContext.Disappearances.Remove(disappearance);
                 await _dbContext.SaveChangesAsync();
 

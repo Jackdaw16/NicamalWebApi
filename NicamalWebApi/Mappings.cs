@@ -8,7 +8,7 @@ namespace NicamalWebApi
     {
         public Mappings()
         {
-            CreateMap<User, UserShelterPatch>().ReverseMap();
+            CreateMap<User, UserPatch>().ReverseMap();
             CreateMap<User, UserShelterUpdate>().ReverseMap();
             CreateMap<User, UserShelterDetail>().ReverseMap();
             CreateMap<User, UserShelterRegister>().ReverseMap();
@@ -23,8 +23,9 @@ namespace NicamalWebApi
             
             CreateMap<Disappearance, DisappearanceDetail>().ReverseMap();
             CreateMap<Disappearance, DisappearanceListResponse>().ReverseMap();
-            CreateMap<Disappearance, DisappearanceCreate>().ReverseMap();    
-            
+            CreateMap<Disappearance, DisappearanceCreate>().ReverseMap();
+
+            CreateMap<User, UserUpdate>().ReverseMap();
             CreateMap<User, UserForPublication>();
             CreateMap<User, UserResponseWhenLoggedIn>();
             CreateMap<UserResponseWhenLoggedIn, User>();

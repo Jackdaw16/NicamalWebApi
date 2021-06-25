@@ -17,6 +17,11 @@ namespace NicamalWebApi.DbContexts
             
             modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
 
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Publications)
+                .WithOne(p => p.User)
+                .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<User>().HasOne(a => a.Reported).WithOne(b => b.ReportedUser)
                 .HasForeignKey<Report>(b => b.ReportedUserId);
 

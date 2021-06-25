@@ -226,10 +226,13 @@ namespace NicamalWebApi.Controllers
         {
             try
             {
-                var publication = await _dbContext.Publications.FirstOrDefaultAsync(p => p.Id == id);
+                var publication = await _dbContext.Publications
+                    .FirstOrDefaultAsync(p => p.Id == id);
 
                 if (publication == null)
                     return NotFound();
+
+                await _imageStorage.DeleteFile(publication.Image, Container);
 
                 _dbContext.Publications.Remove(publication);
                 await _dbContext.SaveChangesAsync();

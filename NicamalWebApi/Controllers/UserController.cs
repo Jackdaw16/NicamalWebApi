@@ -10,6 +10,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -17,6 +18,7 @@ using Microsoft.IdentityModel.Tokens;
 using NicamalWebApi.DbContexts;
 using NicamalWebApi.Models;
 using NicamalWebApi.Models.ViewModels;
+using NicamalWebApi.Services;
 
 
 namespace NicamalWebApi.Controllers
@@ -27,13 +29,15 @@ namespace NicamalWebApi.Controllers
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly IMapper _mapper;
+        private readonly IImageStorage _imageStorage;
         private readonly IConfiguration _configuration;
         
-        public UserController(ApplicationDbContext dbContext, IMapper mapper, IConfiguration configuration)
+        public UserController(ApplicationDbContext dbContext, IMapper mapper, IConfiguration configuration, IImageStorage imageStorage)
         {
             _dbContext = dbContext;
             _mapper = mapper;
             _configuration = configuration;
+            _imageStorage = imageStorage;
 
         }
         
@@ -43,7 +47,7 @@ namespace NicamalWebApi.Controllers
         {
             try
             {
-                User user = await _dbContext.Users
+                var user = await _dbContext.Users
                     .FirstOrDefaultAsync(u => u.Id == id);
 
                 if (user == null)
@@ -65,7 +69,7 @@ namespace NicamalWebApi.Controllers
         {
             try
             {
-                User user = await _dbContext.Users
+                var user = await _dbContext.Users
                     .Include(u => u.Reported).ThenInclude(r => r.User)
                     .FirstOrDefaultAsync(u => u.Id == id);
 
@@ -93,7 +97,7 @@ namespace NicamalWebApi.Controllers
                         .Select(item => item.ToString("x2")));
                 }
 
-                User user = _mapper.Map<User>(userRegister);
+                var user = _mapper.Map<User>(userRegister);
 
                 user.Id = Guid.NewGuid().ToString();
                 user.IsShelter = false;
@@ -172,16 +176,121 @@ namespace NicamalWebApi.Controllers
             };
         }
         
+        [HttpPut]
+        [Authorize]
+        public async Task<ActionResult> Put([FromQuery] string id, [FromBody] UserUpdate userUpdate)
+        {
+            try
+            {
+                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
+                
+                if (user == null)
+                    return NotFound();
+                if (user.IsShelter)
+                    return BadRequest();
+                
+                var userImage = user.Image;
+                
+                user = _mapper.Map(userUpdate, user);
+
+                if (string.IsNullOrEmpty(userUpdate.Image))
+                    user.Image = userImage;
+
+                user.UpdatedAt = DateTime.Now;
+
+                await _dbContext.SaveChangesAsync();
+                
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+        
+        [HttpPatch]
+        [Authorize]
+        public async Task<ActionResult> Patch([FromQuery] string id, [FromBody] JsonPatchDocument<UserPatch> patchDocument)
+        {
+            if (patchDocument == null)
+                return BadRequest();
+
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
+
+            if (user == null)
+                return NotFound();
+            if (user.IsShelter)
+                return BadRequest();
+            
+            var userUpdate = _mapper.Map<UserPatch>(user);
+
+            patchDocument.ApplyTo(userUpdate, ModelState);
+
+            _mapper.Map(userUpdate, user);
+            
+            var isValid = await TryUpdateModelAsync(user);
+            
+            if (!isValid)
+                return BadRequest();
+
+            await _dbContext.SaveChangesAsync();
+
+            return Ok();
+        }
+        
+        [HttpPatch("password")]
+        [Authorize]
+        public async Task<ActionResult> PatchPassword([FromQuery] string id, [FromBody] JsonPatchDocument<UserPatch> patchDocument)
+        {
+            if (patchDocument == null)
+                return BadRequest();
+
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
+
+            if (user == null)
+                return NotFound();
+            if (user.IsShelter)
+                return BadRequest();
+            
+            var userUpdate = _mapper.Map<UserPatch>(user);
+
+            patchDocument.ApplyTo(userUpdate, ModelState);
+
+            _mapper.Map(userUpdate, user);
+            
+            using (var sha256 = SHA256.Create())
+            {
+                user.Password =
+                    string.Concat(sha256.ComputeHash(Encoding.UTF8.GetBytes(user.Password))
+                        .Select(item => item.ToString("x2")));
+            }
+            
+            var isValid = await TryUpdateModelAsync(user);
+            
+            if (!isValid)
+                return BadRequest();
+
+            await _dbContext.SaveChangesAsync();
+
+            return Ok();
+        }
+        
         [HttpDelete]
         [Authorize]
         public async Task<ActionResult> Delete([FromQuery] string id)
         {
             try
             {
-                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
+                var user = await _dbContext.Users
+                    .Where(u => !u.IsShelter)
+                    .Include(u => u.Publications)
+                    .FirstOrDefaultAsync(u => u.Id == id);
 
                 if (user == null)
                     return NotFound();
+                
+                foreach (var publication in user.Publications)
+                    await _imageStorage.DeleteFile(publication.Image, "animals");
 
                 _dbContext.Users.Remove(user);
                 await _dbContext.SaveChangesAsync();

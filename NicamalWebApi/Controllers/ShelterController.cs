@@ -76,7 +76,7 @@ namespace NicamalWebApi.Controllers
         [HttpGet("detail")]
         public async Task<ActionResult<UserShelterDetail>> Get([FromQuery] string id)
         {
-            List<PublicationCount> urgentPublications = new List<PublicationCount>();
+            var urgentPublications = new List<PublicationCount>();
             try
             {
                 var shelter = await _dbContext.Users.Where(u => u.IsShelter)
@@ -84,11 +84,7 @@ namespace NicamalWebApi.Controllers
                     .FirstOrDefaultAsync(u => u.Id == id);
 
                 var shelterMapped = _mapper.Map<UserShelter>(shelter);
-                foreach (var urgent in shelterMapped.Publications)
-                {
-                    if (urgent.IsUrgent)
-                        urgentPublications.Add(urgent);
-                }
+                urgentPublications.AddRange(shelterMapped.Publications.Where(urgent => urgent.IsUrgent));
 
                 shelterMapped.PublicationCount = shelterMapped.Publications.Count;
                 shelterMapped.UrgentCount = urgentPublications.Count;
@@ -107,14 +103,14 @@ namespace NicamalWebApi.Controllers
         {
             try
             {
-                using (SHA256 sha256 = SHA256.Create())
+                using (var sha256 = SHA256.Create())
                 {
                     userShelterRegister.Password =
-                        String.Concat(sha256.ComputeHash(Encoding.UTF8.GetBytes(userShelterRegister.Password))
+                        string.Concat(sha256.ComputeHash(Encoding.UTF8.GetBytes(userShelterRegister.Password))
                             .Select(item => item.ToString("x2")));
                 }
                 
-                User user = _mapper.Map<User>(userShelterRegister);
+                var user = _mapper.Map<User>(userShelterRegister);
 
                 user.Id = Guid.NewGuid().ToString();
                 user.IsShelter = true;
@@ -124,7 +120,7 @@ namespace NicamalWebApi.Controllers
                 
                 if (userShelterRegister.Image != null)
                 {
-                    using (var memoryStream = new MemoryStream())
+                    await using (var memoryStream = new MemoryStream())
                     {
                         await userShelterRegister.Image.CopyToAsync(memoryStream);
                         var content = memoryStream.ToArray();
@@ -166,9 +162,9 @@ namespace NicamalWebApi.Controllers
                 return new CreatedAtRouteResult("GetSanction", new {sanction.Id}, sanction);
             }
 
-            using (SHA256 sha256 = SHA256.Create())
+            using (var sha256 = SHA256.Create())
             {
-                userLogin.Password = String.Concat(sha256.ComputeHash(Encoding.UTF8.GetBytes(userLogin.Password))
+                userLogin.Password = string.Concat(sha256.ComputeHash(Encoding.UTF8.GetBytes(userLogin.Password))
                     .Select(item => item.ToString("x2")));
             }
 
@@ -199,7 +195,7 @@ namespace NicamalWebApi.Controllers
                 
                 if (userShelterUpdate.Image != null)
                 {
-                    using (var memoryStream = new MemoryStream())
+                    await using (var memoryStream = new MemoryStream())
                     {
                         await userShelterUpdate.Image.CopyToAsync(memoryStream);
                         var content = memoryStream.ToArray();
@@ -228,7 +224,7 @@ namespace NicamalWebApi.Controllers
         
         [HttpPatch]
         [Authorize]
-        public async Task<ActionResult> Patch([FromQuery] string id, [FromBody] JsonPatchDocument<UserShelterPatch> patchDocument)
+        public async Task<ActionResult> Patch([FromQuery] string id, [FromBody] JsonPatchDocument<UserPatch> patchDocument)
         {
             if (patchDocument == null)
                 return BadRequest();
@@ -240,7 +236,7 @@ namespace NicamalWebApi.Controllers
             if (!shelter.IsShelter)
                 return BadRequest();
             
-            var shelterUpdate = _mapper.Map<UserShelterPatch>(shelter);
+            var shelterUpdate = _mapper.Map<UserPatch>(shelter);
 
             patchDocument.ApplyTo(shelterUpdate, ModelState);
 
@@ -258,7 +254,7 @@ namespace NicamalWebApi.Controllers
         
         [HttpPatch("password")]
         [Authorize]
-        public async Task<ActionResult> PatchPassword([FromQuery] string id, [FromBody] JsonPatchDocument<UserShelterPatch> patchDocument)
+        public async Task<ActionResult> PatchPassword([FromQuery] string id, [FromBody] JsonPatchDocument<UserPatch> patchDocument)
         {
             if (patchDocument == null)
                 return BadRequest();
@@ -270,16 +266,16 @@ namespace NicamalWebApi.Controllers
             if (!shelter.IsShelter)
                 return BadRequest();
             
-            var shelterUpdate = _mapper.Map<UserShelterPatch>(shelter);
+            var shelterUpdate = _mapper.Map<UserPatch>(shelter);
 
             patchDocument.ApplyTo(shelterUpdate, ModelState);
 
             _mapper.Map(shelterUpdate, shelter);
             
-            using (SHA256 sha256 = SHA256.Create())
+            using (var sha256 = SHA256.Create())
             {
                 shelter.Password =
-                    String.Concat(sha256.ComputeHash(Encoding.UTF8.GetBytes(shelter.Password))
+                    string.Concat(sha256.ComputeHash(Encoding.UTF8.GetBytes(shelter.Password))
                         .Select(item => item.ToString("x2")));
             }
             
@@ -299,10 +295,17 @@ namespace NicamalWebApi.Controllers
         {
             try
             {
-                var shelter = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
+                var shelter = await _dbContext.Users.Where(u => u.IsShelter)
+                    .Include(u => u.Publications)
+                    .FirstOrDefaultAsync(u => u.Id == id);
 
                 if (shelter == null)
                     return NotFound();
+
+                await _imageStorage.DeleteFile(shelter.Image, Container);
+
+                foreach (var publication in shelter.Publications)
+                    await _imageStorage.DeleteFile(publication.Image, "animals");
 
                 _dbContext.Users.Remove(shelter);
                 await _dbContext.SaveChangesAsync();
