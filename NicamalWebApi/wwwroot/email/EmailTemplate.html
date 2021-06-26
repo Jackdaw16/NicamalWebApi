@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        font-face {
+            font-family: 'Quicksand';
+            src: url("https://fonts.googleapis.com/css?family=Quicksand");
+        }
+        body{
+            font-family: 'Quicksand';
+        }
+        
+        h2 {
+            color: #40B28A;
+        }
+        
+        p{
+            color: #353736;
+        }
+        
+        a.btn {
+            text-decoration: none;
+            background: #40B28A;
+            border-radius: 40px;
+            color: black;
+            padding: 8px 16px;
+        }
+        
+        .space {
+            margin-top: 8px;
+            margin-bottom: 24px;
+        }
+        
+        .container {
+            padding: 16px 32px;
+            display: flex;
+            background-color: #F5F5F5;
+        }
+
+        .subContainer {
+            padding: 16px;
+            background-color: white;
+            width: auto;
+            margin: auto;
+            box-shadow: rgba(0, 0, 0, 0.50) 0px 3px 8px;
+            border-radius: 25px;
+        }
+        .image-container {
+            margin: 16px 8px;
+        }
+        
+        .text-container {
+            margin: 16px 8px;
+        }
+
+        .header {
+            width: 200px;
+            height: auto;
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                width: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="subContainer">
+            
+            <div class="image-container">
+                <img class="header" src="header.png" alt="header">
+            </div>
+            
+           <div class="text-container">
+               <h2>Verifica tu correo electrónico</h2>
+               <p>Bienvenido a Nicamal, verifica tu cuenta para tener acceso a las funcionalidades de la aplicación.</p>
+               <p class="space">¡Haz click en el botón de abajo para verificar!</p>
+               
+               <a class="btn" href="https://www.jdemetriodc.com">Confirmar correo</a>
+               
+           </div>
+        </div>
+    </div>
+</body>
+</html>

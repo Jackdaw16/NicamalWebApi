@@ -4,6 +4,6 @@ namespace NicamalWebApi.Services
 {
     public interface IMailKitService
     {
-        Task sendMail(string email, string name, string text, string subject);
+        void SendMail(string email, string name, string text, string subject);
     }
 }

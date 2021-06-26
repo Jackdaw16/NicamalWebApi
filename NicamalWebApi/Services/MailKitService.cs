@@ -1,7 +1,11 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Text;
 using System.Threading.Tasks;
+using AutoMapper.Configuration;
 using MailKit.Net.Smtp;
 using MimeKit;
+using MimeKit.Utils;
 
 namespace NicamalWebApi.Services
 {
@@ -10,14 +14,21 @@ namespace NicamalWebApi.Services
         private readonly string _serverEmail = "nicamal.app@gmail.com";
         private readonly string _serverName = "Nicamal App";
         private readonly string _serverPassword = "nicamal_app2021";
-        
-        public async Task sendMail(string email, string name, string text, string subject)
+        private readonly IServiceProvider _serviceProvider;
+
+        public MailKitService(IServiceProvider serviceProvider)
+        {
+            _serviceProvider = serviceProvider;
+        }
+
+        public async void SendMail(string email, string name, string text, string subject)
         {
             var message = new MimeMessage();
             message.From.Add(new MailboxAddress(_serverName, _serverEmail));
             message.To.Add(new MailboxAddress(name, email));
             message.Subject = subject;
-            message.Body =new TextPart(MimeKit.Text.TextFormat.Html) { Text = CreateBody(name)};
+            message.Body = CreateBody(name);
+            
             using (var client = new SmtpClient())
             {
                 client.CheckCertificateRevocation = false;
@@ -29,18 +40,27 @@ namespace NicamalWebApi.Services
             }
         }
 
-        private string CreateBody(string name)
+        private MimeEntity CreateBody(string name)
         {
-            string body = string.Empty;
-
-            using (StreamReader SourceReader = System.IO.File.OpenText("./EmailTemplate.html"))
+            string HtmlFormat = string.Empty;
+            var builder = new BodyBuilder();
+            
+            using (FileStream fileStream = new FileStream($"{Directory.GetCurrentDirectory()}/wwwroot/email/EmailTemplate.html", FileMode.Open))
             {
-                body = SourceReader.ReadToEnd();
+                using (StreamReader sourceReader = new StreamReader(fileStream, Encoding.GetEncoding("gbk")))
+                {
+                    HtmlFormat = sourceReader.ReadToEnd();
+                }
             }
 
-            body = body.Replace("{name}", name);
+            var imagePath = $"{Directory.GetCurrentDirectory()}/wwwroot/email/header.png";
+            var image = builder.LinkedResources.Add(imagePath);
+            image.ContentId = MimeUtils.GenerateMessageId();
+            HtmlFormat = HtmlFormat.Replace(Path.GetFileName(imagePath), string.Format("cid:{0}", image.ContentId));
+            HtmlFormat = HtmlFormat.Replace("{name}", name);
+            builder.HtmlBody = HtmlFormat;
 
-            return body;
+            return builder.ToMessageBody();
         }
     }
 }

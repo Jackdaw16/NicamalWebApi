@@ -111,7 +111,7 @@ namespace NicamalWebApi.Controllers
                 _dbContext.Add(user);
                 await _dbContext.SaveChangesAsync();
 
-                await _mailKitService.sendMail(user.Email, user.Name, "Hello", "Verification");
+                _mailKitService.SendMail(user.Email, user.Name, "Hello", "Verification");
                 
                 return new CreatedAtRouteResult("GetSingleUser", new {user.Id}, _mapper.Map<UserResponseWhenLoggedIn>(user));
 
