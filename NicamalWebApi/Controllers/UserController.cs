@@ -27,6 +27,7 @@ namespace NicamalWebApi.Controllers
     [ApiController]
     public class UserController: ControllerBase
     {
+
         private readonly ApplicationDbContext _dbContext;
         private readonly IMapper _mapper;
         private readonly IImageStorage _imageStorage;
@@ -40,45 +41,25 @@ namespace NicamalWebApi.Controllers
             _imageStorage = imageStorage;
 
         }
-        
-        [HttpGet("{id}", Name = "GetSingleUser")]
+
+        [HttpGet("detail", Name = "GetSingleUser")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<ActionResult<UserResponseWhenLoggedIn>> Get(string id)
+        public async Task<ActionResult<UserDetail>> GetDetail ([FromQuery] string id)
         {
             try
             {
                 var user = await _dbContext.Users
+                    .Include(u => u.Publications)
                     .FirstOrDefaultAsync(u => u.Id == id);
 
                 if (user == null)
-                {
                     return NotFound();
-                }
+                
+                var userMapped = _mapper.Map<UserCount>(user);
 
-                return _mapper.Map<UserResponseWhenLoggedIn>(user);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
-            }
-        }
-        
-        [HttpGet("detail")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<ActionResult<User>> GetDetail ([FromQuery] string id)
-        {
-            try
-            {
-                var user = await _dbContext.Users
-                    .Include(u => u.Reported).ThenInclude(r => r.User)
-                    .FirstOrDefaultAsync(u => u.Id == id);
+                userMapped.PublicationCount = user.Publications.Count;
 
-                if (user == null)
-                {
-                    return NotFound();
-                }
-
-                return user;
+                return _mapper.Map<UserDetail>(userMapped);
             }
             catch (Exception e)
             {
@@ -91,9 +72,9 @@ namespace NicamalWebApi.Controllers
         {
             try
             {
-                using (SHA256 sha256 = SHA256.Create())
+                using (var sha256 = SHA256.Create())
                 {
-                    userRegister.Password = String.Concat(sha256.ComputeHash(Encoding.UTF8.GetBytes(userRegister.Password))
+                    userRegister.Password = string.Concat(sha256.ComputeHash(Encoding.UTF8.GetBytes(userRegister.Password))
                         .Select(item => item.ToString("x2")));
                 }
 
@@ -120,75 +101,45 @@ namespace NicamalWebApi.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<UserLoggedIn>> LoggingUser([FromBody] UserLogIn userLogin)
         {
-            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == userLogin.Email);
+            var user = await _dbContext.Users
+                .Where(u => !u.IsShelter)
+                .FirstOrDefaultAsync(u => u.Email == userLogin.Email);
 
             if (user == null)
-            {
                 return NotFound();
-            }
 
             var sanction = await _dbContext.Sanctions
                 .Include(u => u.User)
                 .FirstOrDefaultAsync(s => s.User.Id == user.Id);
+            
             if (sanction != null)
-            {
                 return new CreatedAtRouteResult("GetSanction", new {sanction.Id}, sanction);
-            }
 
-            using (SHA256 sha256 = SHA256.Create())
+            using (var sha256 = SHA256.Create())
             {
-                userLogin.Password = String.Concat(sha256.ComputeHash(Encoding.UTF8.GetBytes(userLogin.Password))
+                userLogin.Password = string.Concat(sha256.ComputeHash(Encoding.UTF8.GetBytes(userLogin.Password))
                     .Select(item => item.ToString("x2")));
             }
 
             if (user.Password != userLogin.Password)
-            {
                 return Unauthorized();
-            }
 
             return await TokenGenerator(user);
         }
-        
-        private async Task<ActionResult<UserLoggedIn>> TokenGenerator(User user)
-        {
-            var secretKey = _configuration.GetValue<string>("key");
-            var key = Encoding.ASCII.GetBytes(secretKey);
 
-            var claims = new[]
-            {
-                new Claim(ClaimTypes.Name, user.Id.ToString()),
-            };
-            
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddDays(1),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-            
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var createdToken = tokenHandler.CreateToken(tokenDescriptor);
-            
-            return new UserLoggedIn
-            {
-                UserResponse = _mapper.Map<UserResponseWhenLoggedIn>(user),
-                Token = tokenHandler.WriteToken(createdToken)
-            };
-        }
-        
         [HttpPut]
         [Authorize]
         public async Task<ActionResult> Put([FromQuery] string id, [FromBody] UserUpdate userUpdate)
         {
             try
             {
-                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
+                var user = await _dbContext.Users
+                    .Where(u => !u.IsShelter)
+                    .FirstOrDefaultAsync(u => u.Id == id);
                 
                 if (user == null)
                     return NotFound();
-                if (user.IsShelter)
-                    return BadRequest();
-                
+
                 var userImage = user.Image;
                 
                 user = _mapper.Map(userUpdate, user);
@@ -215,13 +166,13 @@ namespace NicamalWebApi.Controllers
             if (patchDocument == null)
                 return BadRequest();
 
-            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
+            var user = await _dbContext.Users
+                .Where(u => !u.IsShelter)
+                .FirstOrDefaultAsync(u => u.Id == id);
 
             if (user == null)
                 return NotFound();
-            if (user.IsShelter)
-                return BadRequest();
-            
+
             var userUpdate = _mapper.Map<UserPatch>(user);
 
             patchDocument.ApplyTo(userUpdate, ModelState);
@@ -245,13 +196,13 @@ namespace NicamalWebApi.Controllers
             if (patchDocument == null)
                 return BadRequest();
 
-            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
+            var user = await _dbContext.Users
+                .Where(u => !u.IsShelter)
+                .FirstOrDefaultAsync(u => u.Id == id);
 
             if (user == null)
                 return NotFound();
-            if (user.IsShelter)
-                return BadRequest();
-            
+
             var userUpdate = _mapper.Map<UserPatch>(user);
 
             patchDocument.ApplyTo(userUpdate, ModelState);
@@ -302,6 +253,33 @@ namespace NicamalWebApi.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
             }
             
+        }
+        
+        private async Task<ActionResult<UserLoggedIn>> TokenGenerator(User user)
+        {
+            var secretKey = _configuration.GetValue<string>("key");
+            var key = Encoding.ASCII.GetBytes(secretKey);
+
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.Name, user.Id.ToString()),
+            };
+            
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.UtcNow.AddDays(1),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var createdToken = tokenHandler.CreateToken(tokenDescriptor);
+            
+            return new UserLoggedIn
+            {
+                UserResponse = _mapper.Map<UserResponseWhenLoggedIn>(user),
+                Token = tokenHandler.WriteToken(createdToken)
+            };
         }
     }
 }

@@ -85,9 +85,9 @@ namespace NicamalWebApi.Controllers
                     queryable = queryable.Where(x => x.Species.Contains(filters.Specie)).OrderByDescending(p => p.UpdateAt);
                 }
 
-                if (!string.IsNullOrEmpty(filters.Country))
+                if (!string.IsNullOrEmpty(filters.Address))
                 {
-                    queryable = queryable.Where(x => x.User.Country.Contains(filters.Country)).OrderByDescending(p => p.UpdateAt);
+                    queryable = queryable.Where(x => x.User.Address.Contains(filters.Address)).OrderByDescending(p => p.UpdateAt);
                 }
 
                 if (!string.IsNullOrEmpty(filters.Province))
@@ -95,15 +95,15 @@ namespace NicamalWebApi.Controllers
                     queryable = queryable.Where(x => x.User.Province.Contains(filters.Province)).OrderByDescending(p => p.UpdateAt);
                 }
 
-                if (!string.IsNullOrEmpty(filters.TextForSearch))
+                if (!string.IsNullOrEmpty(filters.Text))
                 {
                     queryable = queryable
                         .Where(
-                            x => x.Name.Contains(filters.TextForSearch.Trim())
-                                 || x.Personality.Contains(filters.TextForSearch.Trim())
-                                 || x.Observations.Contains(filters.TextForSearch.Trim())
-                                 || x.History.Contains(filters.TextForSearch.Trim())
-                                 || x.Species.Contains(filters.TextForSearch.Trim()));
+                            x => x.Name.Contains(filters.Text.Trim())
+                                 || x.Personality.Contains(filters.Text.Trim())
+                                 || x.Observations.Contains(filters.Text.Trim())
+                                 || x.History.Contains(filters.Text.Trim())
+                                 || x.Species.Contains(filters.Text.Trim()));
                 }
 
                 await HttpContext.AddPaginationParams(queryable, filters.PageSize);

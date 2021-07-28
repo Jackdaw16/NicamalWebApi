@@ -73,15 +73,20 @@ namespace NicamalWebApi.Controllers
             }
         }
         
-        [HttpGet("detail")]
+        [HttpGet("detail", Name = "GetSingleShelter")]
         public async Task<ActionResult<UserShelterDetail>> Get([FromQuery] string id)
         {
             var urgentPublications = new List<PublicationCount>();
+            
             try
             {
-                var shelter = await _dbContext.Users.Where(u => u.IsShelter)
+                var shelter = await _dbContext.Users
+                    .Where(u => u.IsShelter)
                     .Include(u => u.Publications)
                     .FirstOrDefaultAsync(u => u.Id == id);
+
+                if (shelter == null)
+                    return NotFound();
 
                 var shelterMapped = _mapper.Map<UserShelter>(shelter);
                 urgentPublications.AddRange(shelterMapped.Publications.Where(urgent => urgent.IsUrgent));
@@ -95,6 +100,156 @@ namespace NicamalWebApi.Controllers
             catch (Exception e)
             {
                  return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+        
+        [HttpGet("filters")]
+        public async Task<ActionResult<IEnumerable<UserShelterList>>> GetFromFilters(
+            [FromQuery] ShelterFilters filters)
+        {
+            try
+            {
+                var queryable = _dbContext.Users.AsQueryable();
+
+                if (!string.IsNullOrEmpty(filters.Address))
+                {
+                    queryable = queryable.Where(x => x.Address.Contains(filters.Address) && x.IsShelter).OrderByDescending(p => p.UpdatedAt);
+                }
+
+                if (!string.IsNullOrEmpty(filters.Province))
+                {
+                    queryable = queryable.Where(x => x.Province.Contains(filters.Province) && x.IsShelter).OrderByDescending(p => p.UpdatedAt);
+                }
+
+                if (!string.IsNullOrEmpty(filters.Text))
+                {
+                    queryable = queryable
+                        .Where(x => x.Name.Contains(filters.Text.Trim()) && x.IsShelter);
+                }
+
+                await HttpContext.AddPaginationParams(queryable, filters.PageSize);
+                
+                var shelter = await queryable.Paginate(filters.Pagination).OrderByDescending(x => x.CreatedAt).ToListAsync();
+
+                return _mapper.Map<List<UserShelterList>>(shelter);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+
+        [HttpGet("publications")]
+        public async Task<ActionResult<IEnumerable<PublicationsList>>> GetShelterPublication([FromQuery] Pagination pagination, [FromQuery] string id)
+        {
+            try
+            {
+                var queryable = _dbContext.Publications.AsQueryable();
+                queryable = queryable
+                    .Where(p => p.UserId == id && p.User.IsShelter)
+                    .OrderByDescending(p => p.UpdateAt);
+
+                await HttpContext.AddPaginationParams(queryable, pagination.PageSize);
+
+                var publications = await queryable
+                    .Paginate(pagination)
+                    .Include(p => p.User)
+                    .ToListAsync();
+
+                return _mapper.Map<List<PublicationsList>>(publications);
+                
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+        
+        [HttpGet("publications/filters")]
+        public async Task<ActionResult<IEnumerable<PublicationsList>>> GetPublicationsFilters([FromQuery] ShelterPublicationsFilters filters, string id)
+        {
+            try
+            {
+                var queryable = _dbContext.Publications.AsQueryable();
+
+                if (!string.IsNullOrEmpty(filters.Text))
+                {
+                    queryable = queryable
+                        .Where(p => p.User.Id == id && p.User.IsShelter)
+                        .Where(p => p.Name.Contains(filters.Text.Trim()));
+                }
+
+                await HttpContext.AddPaginationParams(queryable, filters.PageSize);
+                
+                var publications = await queryable
+                    .Paginate(filters.Pagination)
+                    .Include(p => p.User)
+                    .OrderByDescending(x => x.CreatedAt)
+                    .ToListAsync();
+
+                return _mapper.Map<List<PublicationsList>>(publications);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+        
+        [HttpGet("publications/urgents")]
+        public async Task<ActionResult<IEnumerable<PublicationsList>>> GetUrgentShelterPublication([FromQuery] Pagination pagination, [FromQuery] string id)
+        {
+            try
+            {
+                var queryable = _dbContext.Publications.AsQueryable();
+                
+                queryable = queryable
+                    .Where(p => p.UserId == id)
+                    .Where(p => p.IsUrgent)
+                    .OrderByDescending(p => p.UpdateAt);
+
+                await HttpContext.AddPaginationParams(queryable, pagination.PageSize);
+
+                var publications = await queryable
+                    .Paginate(pagination)
+                    .Include(p => p.User)
+                    .ToListAsync();
+
+                return _mapper.Map<List<PublicationsList>>(publications);
+                
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+        
+        [HttpGet("publications/urgents/filters")]
+        public async Task<ActionResult<IEnumerable<PublicationsList>>> GetUrgentPublicationsFilters([FromQuery] ShelterPublicationsFilters filters, string id)
+        {
+            try
+            {
+                var queryable = _dbContext.Publications.AsQueryable();
+
+                if (!string.IsNullOrEmpty(filters.Text))
+                {
+                    queryable = queryable
+                        .Where(p => p.User.Id == id && p.User.IsShelter && p.IsUrgent)
+                        .Where(p => p.Name.Contains(filters.Text.Trim()));
+                }
+
+                await HttpContext.AddPaginationParams(queryable, filters.PageSize);
+                
+                var publications = await queryable
+                    .Paginate(filters.Pagination)
+                    .Include(p => p.User)
+                    .OrderByDescending(x => x.CreatedAt)
+                    .ToListAsync();
+
+                return _mapper.Map<List<PublicationsList>>(publications);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
             }
         }
         
@@ -134,7 +289,7 @@ namespace NicamalWebApi.Controllers
                 _dbContext.Add(user);
                 await _dbContext.SaveChangesAsync();
                 
-                return new CreatedAtRouteResult("GetSingleUser", new {user.Id}, _mapper.Map<UserShelterDetail>(user));
+                return new CreatedAtRouteResult("GetSingleShelter", new {user.Id}, _mapper.Map<UserShelterDetail>(user));
 
             }
             catch (Exception e)
@@ -149,18 +304,14 @@ namespace NicamalWebApi.Controllers
             var user = await _dbContext.Users.Where(u => u.IsShelter).FirstOrDefaultAsync(u => u.Email == userLogin.Email);
 
             if (user == null)
-            {
                 return NotFound();
-            }
 
             var sanction = await _dbContext.Sanctions
                 .Include(u => u.User)
                 .FirstOrDefaultAsync(s => s.User.Id == user.Id);
             
             if (sanction != null)
-            {
                 return new CreatedAtRouteResult("GetSanction", new {sanction.Id}, sanction);
-            }
 
             using (var sha256 = SHA256.Create())
             {
@@ -169,9 +320,7 @@ namespace NicamalWebApi.Controllers
             }
 
             if (user.Password != userLogin.Password)
-            {
                 return Unauthorized();
-            }
 
             return await TokenGenerator(user);
         }
@@ -182,13 +331,13 @@ namespace NicamalWebApi.Controllers
         {
             try
             {
-                var shelter = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
+                var shelter = await _dbContext.Users
+                    .Where(u => u.IsShelter)
+                    .FirstOrDefaultAsync(u => u.Id == id);
                 
                 if (shelter == null)
                     return NotFound();
-                if (!shelter.IsShelter)
-                    return BadRequest();
-                
+
                 var shelterImage = shelter.Image;
                 
                 shelter = _mapper.Map(userShelterUpdate, shelter);
@@ -229,13 +378,13 @@ namespace NicamalWebApi.Controllers
             if (patchDocument == null)
                 return BadRequest();
 
-            var shelter = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
+            var shelter = await _dbContext.Users
+                .Where(u => u.IsShelter)
+                .FirstOrDefaultAsync(u => u.Id == id);
 
             if (shelter == null)
                 return NotFound();
-            if (!shelter.IsShelter)
-                return BadRequest();
-            
+
             var shelterUpdate = _mapper.Map<UserPatch>(shelter);
 
             patchDocument.ApplyTo(shelterUpdate, ModelState);
@@ -259,13 +408,13 @@ namespace NicamalWebApi.Controllers
             if (patchDocument == null)
                 return BadRequest();
 
-            var shelter = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
+            var shelter = await _dbContext.Users
+                .Where(u => u.IsShelter)
+                .FirstOrDefaultAsync(u => u.Id == id);
 
             if (shelter == null)
                 return NotFound();
-            if (!shelter.IsShelter)
-                return BadRequest();
-            
+
             var shelterUpdate = _mapper.Map<UserPatch>(shelter);
 
             patchDocument.ApplyTo(shelterUpdate, ModelState);
@@ -295,7 +444,8 @@ namespace NicamalWebApi.Controllers
         {
             try
             {
-                var shelter = await _dbContext.Users.Where(u => u.IsShelter)
+                var shelter = await _dbContext.Users
+                    .Where(u => u.IsShelter)
                     .Include(u => u.Publications)
                     .FirstOrDefaultAsync(u => u.Id == id);
 

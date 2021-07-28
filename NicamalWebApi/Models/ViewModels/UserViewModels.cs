@@ -96,6 +96,36 @@ namespace NicamalWebApi.Models.ViewModels
         public DateTime UpdatedAt { get; set; }
     }
 
+    public class UserCount
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string SurNames { get; set; }
+        public string Image { get; set; }
+        public string Address { get; set; }
+        public string Province { get; set; }
+        public string Country { get; set; }
+        
+        public List<PublicationCount> Publications { get; set; }
+        public int PublicationCount { get; set; }
+
+    }
+
+    public class UserDetail
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string SurNames { get; set; }
+        public string Image { get; set; }
+        public string History { get; set; }
+        public string IsShelter { get; set; }
+        public string Address { get; set; }
+        public string Province { get; set; }
+        public string Country { get; set; }
+        
+        public int PublicationCount { get; set; }
+    }
+
     public class UserLogIn
     {
         [Required]
@@ -118,6 +148,8 @@ namespace NicamalWebApi.Models.ViewModels
         public string Address { get; set; }
         public string Province { get; set; }
         public string Country { get; set; }
+        public string UrlDonation { get; set; }
+        public string History { get; set; }
         
         public List<PublicationCount> Publications { get; set; }
         public int PublicationCount { get; set; }
